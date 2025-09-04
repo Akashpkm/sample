@@ -1329,11 +1329,6 @@
                 </div>
                 
                 <!-- Profit Highlight Section -->
-                <div class="profit-highlight">
-                    <h3><i class="fas fa-coins"></i> Estimated Buying Profit</h3>
-                    <div class="profit-value" id="profit-value">₹0</div>
-                    <div class="kpi-change">Based on current pipeline</div>
-                </div>
                 
                 <div class="dashboard-row">
                     <div class="dashboard-card">
@@ -2466,7 +2461,7 @@
         function calculateAddTotalPercentage() {
             const winningPercentage = parseFloat(document.getElementById('addWinningPercentage').value) || 0;
             const buyingPercentage = parseFloat(document.getElementById('addBuyingPercentage').value) || 0;
-            const totalPercentage = winningPercentage + buyingPercentage;
+            const totalPercentage = (winningPercentage + buyingPercentage)/2;
             
             document.getElementById('addTotalPercentage').value = totalPercentage + '%';
             calculateAddWeightedForecast();
@@ -2476,7 +2471,7 @@
         function calculateEditTotalPercentage() {
             const winningPercentage = parseFloat(document.getElementById('editWinningPercentage').value) || 0;
             const buyingPercentage = parseFloat(document.getElementById('editBuyingPercentage').value) || 0;
-            const totalPercentage = winningPercentage + buyingPercentage;
+            const totalPercentage = (winningPercentage + buyingPercentage)/2;
             
             document.getElementById('editTotalPercentage').value = totalPercentage + '%';
             calculateEditWeightedForecast();
@@ -2487,7 +2482,7 @@
             const potentialValue = parseFloat(document.getElementById('addPotentialValue').value) || 0;
             const winningPercentage = parseFloat(document.getElementById('addWinningPercentage').value) || 0;
             const buyingPercentage = parseFloat(document.getElementById('addBuyingPercentage').value) || 0;
-            const totalPercentage = winningPercentage + buyingPercentage;
+            const totalPercentage = (winningPercentage + buyingPercentage)/2;
             const weightedForecast = (potentialValue * totalPercentage) / 100;
             
             document.getElementById('addWeightedForecast').value = formatCurrency(weightedForecast);
@@ -2498,7 +2493,7 @@
             const potentialValue = parseFloat(document.getElementById('editPotentialValue').value) || 0;
             const winningPercentage = parseFloat(document.getElementById('editWinningPercentage').value) || 0;
             const buyingPercentage = parseFloat(document.getElementById('editBuyingPercentage').value) || 0;
-            const totalPercentage = winningPercentage + buyingPercentage;
+            const totalPercentage = (winningPercentage + buyingPercentage)/2;
             const weightedForecast = (potentialValue * totalPercentage) / 100;
             
             document.getElementById('editWeightedForecast').value = formatCurrency(weightedForecast);
@@ -2838,7 +2833,7 @@
                 const potentialValue = parseInt(document.getElementById('editPotentialValue').value);
                 const winningPercentage = parseInt(document.getElementById('editWinningPercentage').value);
                 const buyingPercentage = parseInt(document.getElementById('editBuyingPercentage').value);
-                const totalPercentage = winningPercentage + buyingPercentage;
+                const totalPercentage = (winningPercentage + buyingPercentage)/2;
                 const weightedForecast = (potentialValue * totalPercentage) / 100;
                 
                 const updatedRecord = {
@@ -3136,11 +3131,7 @@
             document.getElementById('kpi-avg-deal').textContent = formatCurrency(avgDeal);
             document.getElementById('kpi-deal-change').textContent = 'Across all stages';
             
-            // Buying Profit
-            const buyingProfit = records.reduce((sum, record) => {
-                return sum + (record.potentialValue * record.buyingPercentage / 100);
-            }, 0);
-            document.getElementById('profit-value').textContent = formatCurrency(buyingProfit);
+           
         }
         
         // Initialize all charts

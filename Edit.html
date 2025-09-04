@@ -57,6 +57,13 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content {
+            flex: 1;
         }
         
         .header::before {
@@ -86,6 +93,61 @@
             position: relative;
         }
         
+        /* User Info Styles */
+        .user-info {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 5;
+        }
+        
+        .user-info:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .user-menu {
+            position: absolute;
+            right: 110%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 100;
+            margin-top: 10px;
+        }
+        
+        .user-info:hover .user-menu {
+            display: block;
+        }
+        
+        .user-menu button {
+            width: 100%;
+            text-align: left;
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+        
+        .user-menu button:hover {
+            background: var(--light);
+        }
+        
+        /* Dashboard Tabs */
         .dashboard-tabs {
             display: flex;
             background: var(--light);
@@ -131,6 +193,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Dashboard Content */
         .dashboard-content {
             padding: 20px;
         }
@@ -562,14 +625,25 @@
             border-bottom: none;
         }
         
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 25px;
+        /* Profit Highlight */
+        .profit-highlight {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            color: white;
+            text-align: center;
         }
         
-        .full-width {
-            grid-column: 1 / -1;
+        .profit-highlight h3 {
+            color: white;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .profit-value {
+            font-size: 32px;
+            font-weight: bold;
         }
         
         /* Toast Notification */
@@ -655,6 +729,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin: 0;
+            color: white;
         }
         
         .close-btn {
@@ -830,33 +906,8 @@
             min-width: 150px;
         }
         
-        /* Profit Highlight */
-        .profit-highlight {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin: 20px 0;
-            color: white;
-            text-align: center;
-        }
-        
-        .profit-highlight h3 {
-            color: white;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .profit-value {
-            font-size: 32px;
-            font-weight: bold;
-        }
-        
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
-            .analytics-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .dashboard-card {
                 min-width: 100%;
             }
@@ -870,6 +921,12 @@
             .kpi-container {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
         }
         
         @media (max-width: 768px) {
@@ -966,20 +1023,52 @@
                 text-align: center;
             }
         }
+        
+        /* Add Product Button */
+        .add-product-btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .add-product-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-hospital-user"></i> Sales Pipeline Analytics Dashboard</h1>
-            <p>Comprehensive view of your sales pipeline with advanced analytics and forecasting</p>
+            <div class="header-content">
+                <h1><i class="fas fa-hospital-user"></i> Sales Pipeline Analytics Dashboard</h1>
+                <p>Comprehensive view of your sales pipeline with advanced analytics and forecasting</p>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="userDisplayName">User Name</span>
+                <div class="user-menu">
+                    <button onclick="openEditProfileModal()">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </button>
+                    <button onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
         </div>
         
         <div class="dashboard-tabs">
             <div class="tab active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
             <div class="tab" data-tab="records"><i class="fas fa-table"></i> Pipeline Records</div>
             <div class="tab" data-tab="forecast"><i class="fas fa-chart-line"></i> Revenue Forecast</div>
-            <div class="tab" data-tab="analytics"><i class="fas fa-chart-pie"></i> Advanced Analytics</div>
         </div>
         
         <div class="dashboard-content">
@@ -1074,6 +1163,13 @@
                     </div>
                     
                     <div class="filter-group">
+                        <label for="productFilter"><i class="fas fa-cube"></i> Product</label>
+                        <select class="filter-select" id="productFilter">
+                            <option value="">All Products</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
                         <label for="distributorFilter"><i class="fas fa-user-tie"></i> Distributor</label>
                         <select class="filter-select" id="distributorFilter">
                             <option value="">All Distributors</option>
@@ -1113,7 +1209,9 @@
                                 <th>Date</th>
                                 <th>Doctor</th>
                                 <th>Hospital</th>
+                                <th>Product</th>
                                 <th>Distributor</th>
+                                <th>Sales Person</th>
                                 <th>Stage</th>
                                 <th>Potential Value (₹)</th>
                                 <th>Winning %</th>
@@ -1222,46 +1320,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Analytics Tab -->
-            <div class="tab-content" id="analytics-tab">
-                <div class="analytics-grid">
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-tachometer-alt"></i> Conversion Rates by Stage</h3>
-                        <div class="chart-container">
-                            <canvas id="conversionChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-clock"></i> Average Time in Each Stage</h3>
-                        <div class="chart-container">
-                            <canvas id="stageTimeChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card full-width">
-                        <h3><i class="fas fa-calendar-alt"></i> Pipeline Movement</h3>
-                        <div class="chart-container">
-                            <canvas id="pipelineMovementChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-map-marker-alt"></i> Regional Distribution</h3>
-                        <div class="chart-container">
-                            <canvas id="regionalChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-product-hunt"></i> Product/Service Analysis</h3>
-                        <div class="chart-container">
-                            <canvas id="productChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1300,8 +1358,29 @@
                         
                         <div class="form-col">
                             <div class="form-group">
+                                <label for="addProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                                <select class="form-control" id="addProductName" required>
+                                    <option value="">Select a product</option>
+                                </select>
+                                <button type="button" class="add-product-btn" onclick="showAddProductModal()">
+                                    <i class="fas fa-plus"></i> Add New Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
                                 <label for="addDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
                                 <input type="text" class="form-control" id="addDistributorName" placeholder="Enter distributor name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
+                                <input type="text" class="form-control" id="addSalesPerson" placeholder="Enter sales person name" required>
                             </div>
                         </div>
                     </div>
@@ -1436,8 +1515,29 @@
                         
                         <div class="form-col">
                             <div class="form-group">
+                                <label for="editProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                                <select class="form-control" id="editProductName" required>
+                                    <option value="">Select a product</option>
+                                </select>
+                                <button type="button" class="add-product-btn" onclick="showAddProductModal()">
+                                    <i class="fas fa-plus"></i> Add New Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
                                 <label for="editDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
                                 <input type="text" class="form-control" id="editDistributorName" placeholder="Enter distributor name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
+                                <input type="text" class="form-control" id="editSalesPerson" placeholder="Enter sales person name" required>
                             </div>
                         </div>
                     </div>
@@ -1541,6 +1641,73 @@
         </div>
     </div>
 
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Add New Product</h2>
+                <button class="close-btn" onclick="closeModal('addProductModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="newProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                        <input type="text" class="form-control" id="newProductName" placeholder="Enter new product name" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('addProductModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="addNewProduct()">
+                    <i class="fas fa-save"></i> Add Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+                <button class="close-btn" onclick="closeModal('editProfileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editProfileName" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Full Name</label>
+                        <input type="text" class="form-control" id="editProfileName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfileEmail" class="required"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email</label>
+                        <input type="email" class="form-control" id="editProfileEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfilePassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> New Password</label>
+                        <input type="password" class="form-control" id="editProfilePassword" placeholder="Leave blank to keep current password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfileConfirmPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Confirm New Password</label>
+                        <input type="password" class="form-control" id="editProfileConfirmPassword" placeholder="Confirm new password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('editProfileModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="updateProfile()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
@@ -1550,7 +1717,11 @@
     <script>
         // SheetDB API configuration
         const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/hwo0eodxoxz87';
+        const USER_API_URL = 'https://sheetdb.io/api/v1/98w1a12uaslbe';
+        
         let records = [];
+        let products = ['HOPE 10K', 'PHACO', 'ANT6000', 'ANT5000', 'A/B SCAN', 'A/B/P SCAN', 'B SCAN'];
+        let currentUser = null;
 
         // Stage probabilities for auto-calculation
         const stageProbabilities = {
@@ -1568,8 +1739,119 @@
 
         // Chart instances
         let pipelineStageChart, monthlyTrendChart, hospitalValueChart, doctorsChart;
-        let forecastTrendChart, conversionChart, stageTimeChart, pipelineMovementChart;
-        let regionalChart, productChart;
+        let forecastTrendChart;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (!savedUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            currentUser = JSON.parse(savedUser);
+            
+            initCharts();
+            loadRecords();
+            loadProducts();
+            setupProductDropdowns();
+            updateUserDisplay();
+            
+            // Add filter functionality
+            document.getElementById('stageFilter').addEventListener('change', function() {
+                displayRecords();
+            });
+            
+            document.getElementById('hospitalFilter').addEventListener('change', function() {
+                displayRecords();
+            });
+            
+            document.getElementById('productFilter').addEventListener('change', function() {
+                displayRecords();
+            });
+            
+            document.getElementById('distributorFilter').addEventListener('change', function() {
+                displayRecords();
+            });
+            
+            document.getElementById('dateFilter').addEventListener('change', function() {
+                displayRecords();
+            });
+            
+            document.getElementById('sortBy').addEventListener('change', function() {
+                displayRecords();
+            });
+        });
+
+        // Load products from localStorage
+        function loadProducts() {
+            const savedProducts = localStorage.getItem('products');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+            }
+        }
+
+        // Save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        // Setup product dropdowns
+        function setupProductDropdowns() {
+            const addProductDropdown = document.getElementById('addProductName');
+            const editProductDropdown = document.getElementById('editProductName');
+            const filterProductDropdown = document.getElementById('productFilter');
+            
+            // Clear existing options except the first one
+            addProductDropdown.innerHTML = '<option value="">Select a product</option>';
+            editProductDropdown.innerHTML = '<option value="">Select a product</option>';
+            filterProductDropdown.innerHTML = '<option value="">All Products</option>';
+            
+            // Add products to dropdowns
+            products.forEach(product => {
+                addProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
+                editProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
+                filterProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
+            });
+        }
+
+        // Show add product modal
+        function showAddProductModal() {
+            document.getElementById('newProductName').value = '';
+            document.getElementById('addProductModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Add new product
+        function addNewProduct() {
+            const newProduct = document.getElementById('newProductName').value.trim();
+            
+            if (!newProduct) {
+                showToast('Please enter a product name', true);
+                return;
+            }
+            
+            if (products.includes(newProduct)) {
+                showToast('Product already exists', true);
+                return;
+            }
+            
+            products.push(newProduct);
+            saveProducts();
+            setupProductDropdowns();
+            
+            closeModal('addProductModal');
+            showToast('Product added successfully!');
+        }
+
+        // Update user display
+        function updateUserDisplay() {
+            if (currentUser) {
+                document.getElementById('userDisplayName').textContent = currentUser.name;
+                document.getElementById('addSalesPerson').value = currentUser.name;
+            }
+        }
 
         // Show toast notification
         function showToast(message, isError = false) {
@@ -1606,7 +1888,9 @@
                     date: record.date,
                     drName: record.drName,
                     hospitalName: record.hospitalName,
+                    productName: record.productName || '',
                     distributorName: record.distributorName || '',
+                    salesPerson: record.salesPerson || '',
                     pipelineStage: record.pipelineStage,
                     potentialValue: parseInt(record.potentialValue) || 0,
                     winningPercentage: parseInt(record.winningPercentage) || 0,
@@ -1641,7 +1925,9 @@
                     date: '2023-05-15',
                     drName: 'Dr. Sarah Johnson',
                     hospitalName: 'City General Hospital',
+                    productName: 'HOPE 10K',
                     distributorName: 'MedEquip Distributors',
+                    salesPerson: 'John Doe',
                     pipelineStage: 'demo-on',
                     potentialValue: 150000,
                     winningPercentage: 40,
@@ -1659,7 +1945,9 @@
                     date: '2023-05-18',
                     drName: 'Dr. Michael Chen',
                     hospitalName: 'Unity Medical Center',
+                    productName: 'PHACO',
                     distributorName: 'Health Solutions Inc.',
+                    salesPerson: 'John Doe',
                     pipelineStage: 'quoted',
                     potentialValue: 275000,
                     winningPercentage: 60,
@@ -1677,7 +1965,9 @@
                     date: '2023-05-20',
                     drName: 'Dr. Emily Williams',
                     hospitalName: 'Children\'s Healthcare',
+                    productName: 'A/B SCAN',
                     distributorName: 'Pediatric Medical Supplies',
+                    salesPerson: 'Jane Smith',
                     pipelineStage: 'prospecting',
                     potentialValue: 89000,
                     winningPercentage: 25,
@@ -1702,11 +1992,16 @@
         // Populate filter dropdowns
         function populateFilters() {
             const hospitalFilter = document.getElementById('hospitalFilter');
+            const productFilter = document.getElementById('productFilter');
             const distributorFilter = document.getElementById('distributorFilter');
             
             // Clear existing options except the first one
             while (hospitalFilter.options.length > 1) {
                 hospitalFilter.remove(1);
+            }
+            
+            while (productFilter.options.length > 1) {
+                productFilter.remove(1);
             }
             
             while (distributorFilter.options.length > 1) {
@@ -1813,6 +2108,7 @@
             let filteredRecords = [...records];
             const stageFilter = document.getElementById('stageFilter').value;
             const hospitalFilter = document.getElementById('hospitalFilter').value;
+            const productFilter = document.getElementById('productFilter').value;
             const distributorFilter = document.getElementById('distributorFilter').value;
             const dateFilter = document.getElementById('dateFilter').value;
             const sortBy = document.getElementById('sortBy').value;
@@ -1823,6 +2119,10 @@
             
             if (hospitalFilter) {
                 filteredRecords = filteredRecords.filter(record => record.hospitalName === hospitalFilter);
+            }
+            
+            if (productFilter) {
+                filteredRecords = filteredRecords.filter(record => record.productName === productFilter);
             }
             
             if (distributorFilter) {
@@ -1918,7 +2218,9 @@
                     <td>${formattedDate}</td>
                     <td>${record.drName}</td>
                     <td>${record.hospitalName}</td>
+                    <td>${record.productName || '-'}</td>
                     <td>${record.distributorName || '-'}</td>
+                    <td>${record.salesPerson || '-'}</td>
                     <td><span class="status-badge ${statusClass}">${stageText}</span></td>
                     <td>${formatCurrency(record.potentialValue)}</td>
                     <td>${record.winningPercentage}%</td>
@@ -1955,7 +2257,9 @@
             // Clear other fields
             document.getElementById('addDrName').value = '';
             document.getElementById('addHospitalName').value = '';
+            document.getElementById('addProductName').selectedIndex = 0;
             document.getElementById('addDistributorName').value = '';
+            document.getElementById('addSalesPerson').value = currentUser.name;
             document.getElementById('addPipelineStage').selectedIndex = 0;
             document.getElementById('addPotentialValue').value = '';
             document.getElementById('addWinningPercentage').value = '';
@@ -1978,7 +2282,18 @@
                 document.getElementById('editDate').value = record.date;
                 document.getElementById('editDrName').value = record.drName;
                 document.getElementById('editHospitalName').value = record.hospitalName;
+                
+                // Set product
+                const productSelect = document.getElementById('editProductName');
+                for (let i = 0; i < productSelect.options.length; i++) {
+                    if (productSelect.options[i].value === record.productName) {
+                        productSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+                
                 document.getElementById('editDistributorName').value = record.distributorName || '';
+                document.getElementById('editSalesPerson').value = record.salesPerson || '';
                 document.getElementById('editPipelineStage').value = record.pipelineStage;
                 document.getElementById('editPotentialValue').value = record.potentialValue;
                 document.getElementById('editWinningPercentage').value = record.winningPercentage;
@@ -2030,7 +2345,9 @@
                 date: document.getElementById('addDate').value,
                 drName: document.getElementById('addDrName').value,
                 hospitalName: document.getElementById('addHospitalName').value,
+                productName: document.getElementById('addProductName').value,
                 distributorName: document.getElementById('addDistributorName').value,
+                salesPerson: document.getElementById('addSalesPerson').value,
                 pipelineStage: document.getElementById('addPipelineStage').value,
                 potentialValue: potentialValue,
                 winningPercentage: winningPercentage,
@@ -2108,7 +2425,9 @@
                     date: document.getElementById('editDate').value,
                     drName: document.getElementById('editDrName').value,
                     hospitalName: document.getElementById('editHospitalName').value,
+                    productName: document.getElementById('editProductName').value,
                     distributorName: document.getElementById('editDistributorName').value,
+                    salesPerson: document.getElementById('editSalesPerson').value,
                     pipelineStage: document.getElementById('editPipelineStage').value,
                     potentialValue: potentialValue,
                     winningPercentage: winningPercentage,
@@ -2690,39 +3009,94 @@
                 const tabId = this.getAttribute('data-tab');
                 document.getElementById(`${tabId}-tab`).classList.add('active');
                 
-                // Update charts when switching to dashboard or analytics tab
-                if (tabId === 'dashboard' || tabId === 'analytics') {
+                // Update charts when switching to dashboard tab
+                if (tabId === 'dashboard') {
                     updateCharts();
                 }
             });
         });
 
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            initCharts();
-            loadRecords();
+        // Open edit profile modal
+        function openEditProfileModal() {
+            document.getElementById('editProfileName').value = currentUser.name;
+            document.getElementById('editProfileEmail').value = currentUser.email;
+            document.getElementById('editProfilePassword').value = '';
+            document.getElementById('editProfileConfirmPassword').value = '';
             
-            // Add filter functionality
-            document.getElementById('stageFilter').addEventListener('change', function() {
-                displayRecords();
-            });
+            document.getElementById('editProfileModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Update profile
+        async function updateProfile() {
+            const name = document.getElementById('editProfileName').value;
+            const email = document.getElementById('editProfileEmail').value;
+            const password = document.getElementById('editProfilePassword').value;
+            const confirmPassword = document.getElementById('editProfileConfirmPassword').value;
             
-            document.getElementById('hospitalFilter').addEventListener('change', function() {
-                displayRecords();
-            });
+            // Validate passwords match if provided
+            if (password && password !== confirmPassword) {
+                showToast('Passwords do not match', true);
+                return;
+            }
             
-            document.getElementById('distributorFilter').addEventListener('change', function() {
-                displayRecords();
-            });
+            try {
+                // Update user data
+                const updatedUser = {
+                    ...currentUser,
+                    name: name,
+                    email: email
+                };
+                
+                // Update password if provided
+                if (password) {
+                    updatedUser.password = password;
+                }
+                
+                // Update in the database
+                const response = await fetch(`${USER_API_URL}/id/${currentUser.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: updatedUser
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.updated > 0) {
+                    // Update current user in localStorage
+                    currentUser = updatedUser;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // Update UI
+                    updateUserDisplay();
+                    
+                    closeModal('editProfileModal');
+                    showToast('Profile updated successfully!');
+                } else {
+                    throw new Error('Profile update failed');
+                }
+            } catch (error) {
+                console.error('Profile update error:', error);
+                showToast('Error updating profile. Please try again.', true);
+            }
+        }
+
+        // Logout function
+        function logout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('currentUser');
             
-            document.getElementById('dateFilter').addEventListener('change', function() {
-                displayRecords();
-            });
-            
-            document.getElementById('sortBy').addEventListener('change', function() {
-                displayRecords();
-            });
-        });
+            // Redirect to login page
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>

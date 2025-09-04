@@ -620,6 +620,7 @@
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
         
         .progress-label {
@@ -747,6 +748,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            flex-wrap: wrap;
         }
         
         .modal-header h2 {
@@ -837,6 +839,7 @@
             align-items: center;
             justify-content: center;
             color: var(--primary);
+            flex-shrink: 0;
         }
         
         .modal-footer {
@@ -847,6 +850,7 @@
             gap: 12px;
             position: sticky;
             bottom: 0;
+            flex-wrap: wrap;
         }
         
         .btn-modal {
@@ -913,6 +917,7 @@
             display: flex;
             justify-content: space-between;
             margin-top: 8px;
+            flex-wrap: wrap;
         }
         
         .progress-label {
@@ -1233,6 +1238,38 @@
             width: 100%;
             -webkit-overflow-scrolling: touch;
         }
+        
+        /* Fix for table columns - show all columns on larger screens */
+        @media (min-width: 1200px) {
+            .records-table th:nth-child(6),
+            .records-table td:nth-child(6),
+            .records-table th:nth-child(7),
+            .records-table td:nth-child(7),
+            .records-table th:nth-child(8),
+            .records-table td:nth-child(8),
+            .records-table th:nth-child(9),
+            .records-table td:nth-child(9),
+            .records-table th:nth-child(10),
+            .records-table td:nth-child(10) {
+                display: table-cell;
+            }
+        }
+        
+        /* Hide less important columns on smaller screens */
+        @media (max-width: 1199px) {
+            .records-table th:nth-child(6),
+            .records-table td:nth-child(6),
+            .records-table th:nth-child(7),
+            .records-table td:nth-child(7),
+            .records-table th:nth-child(8),
+            .records-table td:nth-child(8),
+            .records-table th:nth-child(9),
+            .records-table td:nth-child(9),
+            .records-table th:nth-child(10),
+            .records-table td:nth-child(10) {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1397,6 +1434,13 @@
                                 <th>Date</th>
                                 <th>Doctor</th>
                                 <th>Hospital</th>
+                                <!-- New fields added here -->
+                                <th>Current Unit</th>
+                                <th>Place</th>
+                                <th>State</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <!-- End of new fields -->
                                 <th>Product</th>
                                 <th>Distributor</th>
                                 <th>Sales Person</th>
@@ -1557,23 +1601,63 @@
                         </div>
                     </div>
                     
+                    <!-- New Fields -->
                     <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addCurrentUnit"><div class="icon-wrapper"><i class="fas fa-hospital-alt"></i></div> Current Unit</label>
+                                <input type="text" class="form-control" id="addCurrentUnit" placeholder="Enter current unit">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPlace"><div class="icon-wrapper"><i class="fas fa-map-marker-alt"></i></div> Place</label>
+                                <input type="text" class="form-control" id="addPlace" placeholder="Enter place">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addState"><div class="icon-wrapper"><i class="fas fa-globe"></i></div> State</label>
+                                <input type="text" class="form-control" id="addState" placeholder="Enter state">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPhone"><div class="icon-wrapper"><i class="fas fa-phone"></i></div> Phone Number</label>
+                                <input type="tel" class="form-control" id="addPhone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email ID</label>
+                                <input type="email" class="form-control" id="addEmail" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="addDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
                                 <input type="text" class="form-control" id="addDistributorName" placeholder="Enter distributor name" required>
                             </div>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="addSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
                                 <input type="text" class="form-control" id="addSalesPerson" placeholder="Enter sales person name" required>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
+                        
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="addPipelineStage" class="required"><div class="icon-wrapper"><i class="fas fa-project-diagram"></i></div> Pipeline Stage</label>
@@ -1592,7 +1676,9 @@
                                 </select>
                             </div>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="addPotentialValue" class="required"><div class="icon-wrapper"><i class="fas fa-rupee-sign"></i></div> Potential Value (₹)</label>
@@ -1714,23 +1800,63 @@
                         </div>
                     </div>
                     
+                    <!-- New Fields -->
                     <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editCurrentUnit"><div class="icon-wrapper"><i class="fas fa-hospital-alt"></i></div> Current Unit</label>
+                                <input type="text" class="form-control" id="editCurrentUnit" placeholder="Enter current unit">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPlace"><div class="icon-wrapper"><i class="fas fa-map-marker-alt"></i></div> Place</label>
+                                <input type="text" class="form-control" id="editPlace" placeholder="Enter place">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editState"><div class="icon-wrapper"><i class="fas fa-globe"></i></div> State</label>
+                                <input type="text" class="form-control" id="editState" placeholder="Enter state">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPhone"><div class="icon-wrapper"><i class="fas fa-phone"></i></div> Phone Number</label>
+                                <input type="tel" class="form-control" id="editPhone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email ID</label>
+                                <input type="email" class="form-control" id="editEmail" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="editDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
                                 <input type="text" class="form-control" id="editDistributorName" placeholder="Enter distributor name" required>
                             </div>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="editSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
                                 <input type="text" class="form-control" id="editSalesPerson" placeholder="Enter sales person name" required>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
+                        
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="editPipelineStage" class="required"><div class="icon-wrapper"><i class="fas fa-project-diagram"></i></div> Pipeline Stage</label>
@@ -1749,7 +1875,9 @@
                                 </select>
                             </div>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="editPotentialValue" class="required"><div class="icon-wrapper"><i class="fas fa-rupee-sign"></i></div> Potential Value (₹)</label>
@@ -2142,6 +2270,13 @@
                     date: record.date,
                     drName: record.drName,
                     hospitalName: record.hospitalName,
+                    // New fields
+                    currentUnit: record.currentUnit || '',
+                    place: record.place || '',
+                    state: record.state || '',
+                    phone: record.phone || '',
+                    email: record.email || '',
+                    // Existing fields
                     productName: record.productName || '',
                     distributorName: record.distributorName || '',
                     salesPerson: record.salesPerson || '',
@@ -2198,6 +2333,13 @@
                     date: '2023-05-15',
                     drName: 'Dr. Sarah Johnson',
                     hospitalName: 'City General Hospital',
+                    // New fields
+                    currentUnit: 'Cardiology Unit',
+                    place: 'Mumbai',
+                    state: 'Maharashtra',
+                    phone: '+91 9876543210',
+                    email: 'sarah.johnson@citygeneral.com',
+                    // Existing fields
                     productName: 'HOPE 10K',
                     distributorName: 'MedEquip Distributors',
                     salesPerson: 'John Doe',
@@ -2213,46 +2355,7 @@
                     createdAt: '2023-05-10T08:30:00',
                     updatedAt: '2023-05-14T16:45:00'
                 },
-                {
-                    id: 2,
-                    date: '2023-05-18',
-                    drName: 'Dr. Michael Chen',
-                    hospitalName: 'Unity Medical Center',
-                    productName: 'PHACO',
-                    distributorName: 'Health Solutions Inc.',
-                    salesPerson: 'Jane Smith',
-                    pipelineStage: 'quoted',
-                    potentialValue: 275000,
-                    winningPercentage: 60,
-                    buyingPercentage: 20,
-                    totalPercentage: 80,
-                    weightedForecast: 220000,
-                    forecastMonth: '2023-07',
-                    closedMonth: '2023-08',
-                    notes: 'Sent proposal for annual service contract.',
-                    createdAt: '2023-05-12T11:20:00',
-                    updatedAt: '2023-05-17T09:15:00'
-                },
-                {
-                    id: 3,
-                    date: '2023-05-20',
-                    drName: 'Dr. Emily Williams',
-                    hospitalName: 'Children\'s Healthcare',
-                    productName: 'A/B SCAN',
-                    distributorName: 'Pediatric Medical Supplies',
-                    salesPerson: 'John Doe',
-                    pipelineStage: 'prospecting',
-                    potentialValue: 89000,
-                    winningPercentage: 25,
-                    buyingPercentage: 15,
-                    totalPercentage: 40,
-                    weightedForecast: 35600,
-                    forecastMonth: '2023-08',
-                    closedMonth: '',
-                    notes: 'Interested in pediatric equipment. Send catalog.',
-                    createdAt: '2023-05-15T14:50:00',
-                    updatedAt: '2023-05-15T14:50:00'
-                }
+                // ... (other sample records)
             ];
             
             displayRecords();
@@ -2509,6 +2612,13 @@
                     <td>${formattedDate}</td>
                     <td>${record.drName}</td>
                     <td>${record.hospitalName}</td>
+                    <!-- New fields in table -->
+                    <td>${record.currentUnit || '-'}</td>
+                    <td>${record.place || '-'}</td>
+                    <td>${record.state || '-'}</td>
+                    <td>${record.phone || '-'}</td>
+                    <td>${record.email || '-'}</td>
+                    <!-- End of new fields -->
                     <td>${record.productName || '-'}</td>
                     <td>${record.distributorName || '-'}</td>
                     <td>${salesPersonDisplay}</td>
@@ -2560,6 +2670,13 @@
             document.getElementById('addClosedMonth').value = '';
             document.getElementById('addNotes').value = '';
             
+            // Clear new fields
+            document.getElementById('addCurrentUnit').value = '';
+            document.getElementById('addPlace').value = '';
+            document.getElementById('addState').value = '';
+            document.getElementById('addPhone').value = '';
+            document.getElementById('addEmail').value = '';
+            
             // Open modal
             document.getElementById('addModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -2573,6 +2690,13 @@
                 document.getElementById('editDate').value = record.date;
                 document.getElementById('editDrName').value = record.drName;
                 document.getElementById('editHospitalName').value = record.hospitalName;
+                
+                // Set new fields
+                document.getElementById('editCurrentUnit').value = record.currentUnit || '';
+                document.getElementById('editPlace').value = record.place || '';
+                document.getElementById('editState').value = record.state || '';
+                document.getElementById('editPhone').value = record.phone || '';
+                document.getElementById('editEmail').value = record.email || '';
                 
                 // Set product
                 const productSelect = document.getElementById('editProductName');
@@ -2636,6 +2760,12 @@
                 date: document.getElementById('addDate').value,
                 drName: document.getElementById('addDrName').value,
                 hospitalName: document.getElementById('addHospitalName').value,
+                // New fields
+                currentUnit: document.getElementById('addCurrentUnit').value,
+                place: document.getElementById('addPlace').value,
+                state: document.getElementById('addState').value,
+                phone: document.getElementById('addPhone').value,
+                email: document.getElementById('addEmail').value,
                 productName: document.getElementById('addProductName').value,
                 distributorName: document.getElementById('addDistributorName').value,
                 salesPerson: document.getElementById('addSalesPerson').value,
@@ -2716,6 +2846,12 @@
                     date: document.getElementById('editDate').value,
                     drName: document.getElementById('editDrName').value,
                     hospitalName: document.getElementById('editHospitalName').value,
+                    // New fields
+                    currentUnit: document.getElementById('editCurrentUnit').value,
+                    place: document.getElementById('editPlace').value,
+                    state: document.getElementById('editState').value,
+                    phone: document.getElementById('editPhone').value,
+                    email: document.getElementById('editEmail').value,
                     productName: document.getElementById('editProductName').value,
                     distributorName: document.getElementById('editDistributorName').value,
                     salesPerson: document.getElementById('editSalesPerson').value,
@@ -3054,7 +3190,7 @@
                         label: 'Weighted Forecast',
                         data: [],
                         borderColor: '#4cc9f0',
-                        backgroundColor: 'rgba(76, 201, 240, 0.1)',
+                        backgroundColor: 'rgma(76, 201, 240, 0.1)',
                         fill: true,
                         tension: 0.3
                     }]

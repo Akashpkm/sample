@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Pipeline Management - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #f0f7ff;
+            --card-bg: #ffffff;
+            --text-primary: #32325d;
+            --text-secondary: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .login-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .login-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .icon-wrapper {
+            background: rgba(67, 97, 238, 0.1);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--success), var(--info));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+        
+        .btn-login:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 16px 22px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.error {
+            background: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1><i class="fas fa-hospital-user"></i> Hospital Pipeline</h1>
+            <p>Sign in to access your sales pipeline dashboard</p>
+        </div>
+        
+        <div class="login-body">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Password</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Don't have an account? <a id="showSignup">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-container" id="signupContainer" style="display: none;">
+        <div class="login-header">
+            <h1><i class="fas fa-hospital-user"></i> Hospital Pipeline</h1>
+            <p>Create a new account</p>
+        </div>
+        
+        <div class="login-body">
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Full Name</label>
+                    <input type="text" class="form-control" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email</label>
+                    <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Password</label>
+                    <input type="password" class="form-control" id="signupPassword" placeholder="Create a password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupConfirmPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Confirm Password</label>
+                    <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Already have an account? <a id="showLogin">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+    </div>
+
+    <script>
+        const USER_API_URL = 'https://sheetdb.io/api/v1/98w1a12uaslbe';
+        
+        // Toggle between login and signup forms
+        document.getElementById('showSignup').addEventListener('click', function() {
+            document.getElementById('loginForm').closest('.login-container').style.display = 'none';
+            document.getElementById('signupContainer').style.display = 'block';
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', function() {
+            document.getElementById('signupContainer').style.display = 'none';
+            document.getElementById('loginForm').closest('.login-container').style.display = 'block';
+        });
+        
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                // Fetch all users
+                const response = await fetch(USER_API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const users = await response.json();
+                
+                // Find user with matching credentials
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    // Store user data in localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 's.html';
+                } else {
+                    showToast('Invalid email or password', true);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Error during login. Please try again.', true);
+            }
+        });
+        
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', true);
+                return;
+            }
+            
+            try {
+                // Check if user already exists
+                const checkResponse = await fetch(`${USER_API_URL}/search?email=${encodeURIComponent(email)}`);
+                if (!checkResponse.ok) {
+                    throw new Error(`HTTP error! status: ${checkResponse.status}`);
+                }
+                
+                const existingUsers = await checkResponse.json();
+                
+                if (existingUsers.length > 0) {
+                    showToast('User with this email already exists', true);
+                    return;
+                }
+                
+                // Create new user
+                const newUser = {
+                    id: Date.now().toString(),
+                    name: name,
+                    email: email,
+                    password: password,
+                    created_at: new Date().toISOString()
+                };
+                
+                const createResponse = await fetch(USER_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: [newUser]
+                    })
+                });
+                
+                if (!createResponse.ok) {
+                    throw new Error(`HTTP error! status: ${createResponse.status}`);
+                }
+                
+                const result = await createResponse.json();
+                
+                if (result.created > 0) {
+                    showToast('Account created successfully! Please sign in.');
+                    
+                    // Switch back to login form
+                    document.getElementById('signupContainer').style.display = 'none';
+                    document.getElementById('loginForm').closest('.login-container').style.display = 'block';
+                    
+                    // Pre-fill the email field
+                    document.getElementById('loginEmail').value = email;
+                } else {
+                    throw new Error('Account creation failed');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                showToast('Error creating account. Please try again.', true);
+            }
+        });
+    </script>
+</body>
+</html>

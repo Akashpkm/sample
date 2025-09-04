@@ -60,10 +60,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .header-content {
             flex: 1;
+            min-width: 300px;
         }
         
         .header::before {
@@ -93,9 +95,13 @@
             position: relative;
         }
         
-        /* User Info Styles */
-        .user-info {
+        /* User Info Styles - Improved for mobile */
+        .user-info-container {
             position: relative;
+            z-index: 100;
+        }
+        
+        .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -105,7 +111,6 @@
             border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
-            z-index: 5;
         }
         
         .user-info:hover {
@@ -113,20 +118,21 @@
         }
         
         .user-menu {
-            position: absolute;
-            right: 110%;
+            position:relative;
+            right: 0;
+            top: 100%;
             background: white;
             border-radius: 8px;
             box-shadow: var(--box-shadow);
             padding: 10px 0;
             min-width: 180px;
             display: none;
-            z-index: 100;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
-        .user-info:hover .user-menu {
+        .user-menu.active {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
         .user-menu button {
@@ -153,6 +159,13 @@
             background: var(--light);
             border-bottom: 1px solid rgba(0,0,0,0.05);
             flex-wrap: wrap;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .dashboard-tabs::-webkit-scrollbar {
+            display: none;
         }
         
         .tab {
@@ -165,6 +178,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
         
         .tab.active {
@@ -338,6 +352,7 @@
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             margin-top: 20px;
+            -webkit-overflow-scrolling: touch;
         }
         
         .records-table {
@@ -422,6 +437,16 @@
             display: inline-block;
             text-align: center;
             min-width: 120px;
+        }
+        
+        .salesperson-badge {
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: #e0e7ff;
+            color: #4338ca;
+            display: inline-block;
         }
         
         .status-prospecting {
@@ -925,8 +950,19 @@
             .header {
                 flex-direction: column;
                 gap: 15px;
+                text-align: center;
             }
-
+            
+            .user-info-container {
+                margin-top: 15px;
+            }
+            
+            .user-menu {
+                left: 0;
+                right: 0;
+                margin: 5px auto;
+                width: 90%;
+            }
         }
         
         @media (max-width: 768px) {
@@ -977,6 +1013,39 @@
             .header h1 {
                 font-size: 26px;
             }
+            
+            .kpi-value {
+                font-size: 24px;
+            }
+            
+            .profit-value {
+                font-size: 26px;
+            }
+            
+            .forecast-value {
+                font-size: 24px;
+            }
+            
+            /* Improve table display on mobile */
+            .records-table {
+                font-size: 14px;
+            }
+            
+            .records-table th,
+            .records-table td {
+                padding: 12px 8px;
+            }
+            
+            .status-badge {
+                min-width: 100px;
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            
+            .action-btn {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
         }
         
         @media (max-width: 576px) {
@@ -999,28 +1068,65 @@
             }
             
             .records-table {
-                font-size: 14px;
+                font-size: 12px;
+            }
+            
+            .records-table th,
+            .records-table td {
+                padding: 10px 6px;
             }
             
             .action-btn {
-                padding: 6px 10px;
-                font-size: 13px;
+                padding: 5px 7px;
+                font-size: 11px;
             }
             
             .status-badge {
-                min-width: 100px;
-                font-size: 12px;
-                padding: 6px 10px;
+                min-width: 90px;
+                font-size: 11px;
+                padding: 5px 8px;
             }
             
             .buy-box {
                 width: 100%;
                 justify-content: center;
+                padding: 12px 16px;
+                font-size: 14px;
             }
             
             .toast {
                 width: calc(100% - 40px);
                 text-align: center;
+                padding: 12px 18px;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .dashboard-card {
+                padding: 15px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .filters {
+                padding: 15px;
+            }
+            
+            /* Stack action buttons on mobile */
+            .records-table td:last-child {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .action-btn {
+                margin-right: 0;
+                width: 100%;
+                justify-content: center;
             }
         }
         
@@ -1042,6 +1148,91 @@
         .add-product-btn:hover {
             opacity: 0.9;
         }
+        
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        /* Animation for cards */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .animated-card {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Search box */
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .search-btn {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-btn:hover {
+            background: var(--secondary);
+        }
+        
+        /* Make sure all content is visible on mobile */
+        .mobile-scroll-container {
+            overflow-x: auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body>
@@ -1051,10 +1242,13 @@
                 <h1><i class="fas fa-hospital-user"></i> Sales Pipeline Analytics Dashboard</h1>
                 <p>Comprehensive view of your sales pipeline with advanced analytics and forecasting</p>
             </div>
-            <div class="user-info">
-                <i class="fas fa-user-circle"></i>
-                <span id="userDisplayName">User Name</span>
-                <div class="user-menu">
+            <div class="user-info-container">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userDisplayName">User Name</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-menu" id="userMenu">
                     <button onclick="openEditProfileModal()">
                         <i class="fas fa-user-edit"></i> Edit Profile
                     </button>
@@ -1176,25 +1370,19 @@
                         </select>
                     </div>
                     
+                    <!-- New Sales Person Filter -->
                     <div class="filter-group">
-                        <label for="dateFilter"><i class="fas fa-calendar"></i> Time Period</label>
-                        <select class="filter-select" id="dateFilter">
-                            <option value="all">All Time</option>
-                            <option value="month">This Month</option>
-                            <option value="quarter">This Quarter</option>
-                            <option value="year">This Year</option>
+                        <label for="salesPersonFilter"><i class="fas fa-user"></i> Sales Person</label>
+                        <select class="filter-select" id="salesPersonFilter">
+                            <option value="">All Sales Persons</option>
                         </select>
                     </div>
-                    
-                    <div class="filter-group">
-                        <label for="sortBy"><i class="fas fa-sort"></i> Sort By</label>
-                        <select class="filter-select" id="sortBy">
-                            <option value="date">Date</option>
-                            <option value="value">Potential Value</option>
-                            <option value="forecast">Weighted Forecast</option>
-                            <option value="doctor">Doctor Name</option>
-                        </select>
-                    </div>
+                </div>
+                
+                <!-- Search Box -->
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search records...">
+                    <button class="search-btn" onclick="searchRecords()"><i class="fas fa-search"></i></button>
                 </div>
                 
                 <!-- Buy Box Style Button -->
@@ -1718,9 +1906,10 @@
         // SheetDB API configuration
         const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/hwo0eodxoxz87';
         const USER_API_URL = 'https://sheetdb.io/api/v1/98w1a12uaslbe';
+        const PRODUCT_API_URL = 'https://sheetdb.io/api/v1/YOUR_PRODUCT_SHEET_ID'; // Replace with your product sheet ID
         
         let records = [];
-        let products = ['HOPE 10K', 'PHACO', 'ANT6000', 'ANT5000', 'A/B SCAN', 'A/B/P SCAN', 'B SCAN'];
+        let products = [];
         let currentUser = null;
 
         // Stage probabilities for auto-calculation
@@ -1753,9 +1942,8 @@
             currentUser = JSON.parse(savedUser);
             
             initCharts();
-            loadRecords();
             loadProducts();
-            setupProductDropdowns();
+            loadRecords();
             updateUserDisplay();
             
             // Add filter functionality
@@ -1775,26 +1963,91 @@
                 displayRecords();
             });
             
-            document.getElementById('dateFilter').addEventListener('change', function() {
+            // Add sales person filter event listener
+            document.getElementById('salesPersonFilter').addEventListener('change', function() {
                 displayRecords();
             });
             
-            document.getElementById('sortBy').addEventListener('change', function() {
-                displayRecords();
+            // Add search functionality
+            document.getElementById('searchInput').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    searchRecords();
+                }
+            });
+            
+            // Close user menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const userMenu = document.getElementById('userMenu');
+                const userInfo = document.querySelector('.user-info');
+                
+                if (!userInfo.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.remove('active');
+                }
             });
         });
 
-        // Load products from localStorage
-        function loadProducts() {
-            const savedProducts = localStorage.getItem('products');
-            if (savedProducts) {
-                products = JSON.parse(savedProducts);
+        // Toggle user menu
+        function toggleUserMenu() {
+            const userMenu = document.getElementById('userMenu');
+            userMenu.classList.toggle('active');
+        }
+
+        // Load products from SheetDB
+        async function loadProducts() {
+            try {
+                // Try to load from SheetDB
+                const response = await fetch(PRODUCT_API_URL);
+                if (response.ok) {
+                    const data = await response.json();
+                    products = data.map(item => item.name);
+                } else {
+                    // If API fails, load from localStorage as fallback
+                    const savedProducts = localStorage.getItem('products');
+                    if (savedProducts) {
+                        products = JSON.parse(savedProducts);
+                    } else {
+                        // Default products if nothing is available
+                        products = ['HOPE 10K', 'PHACO', 'ANT6000', 'ANT5000', 'A/B SCAN', 'A/B/P SCAN', 'B SCAN'];
+                    }
+                }
+                
+                setupProductDropdowns();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                // Load from localStorage as fallback
+                const savedProducts = localStorage.getItem('products');
+                if (savedProducts) {
+                    products = JSON.parse(savedProducts);
+                    setupProductDropdowns();
+                }
             }
         }
 
-        // Save products to localStorage
-        function saveProducts() {
-            localStorage.setItem('products', JSON.stringify(products));
+        // Save products to SheetDB
+        async function saveProducts() {
+            try {
+                // First save to localStorage as fallback
+                localStorage.setItem('products', JSON.stringify(products));
+                
+                // Try to save to SheetDB
+                const productData = products.map(name => ({ name }));
+                
+                const response = await fetch(PRODUCT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: productData
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to save products to SheetDB');
+                }
+            } catch (error) {
+                console.error('Error saving products:', error);
+            }
         }
 
         // Setup product dropdowns
@@ -1824,7 +2077,7 @@
         }
 
         // Add new product
-        function addNewProduct() {
+        async function addNewProduct() {
             const newProduct = document.getElementById('newProductName').value.trim();
             
             if (!newProduct) {
@@ -1838,7 +2091,7 @@
             }
             
             products.push(newProduct);
-            saveProducts();
+            await saveProducts();
             setupProductDropdowns();
             
             closeModal('addProductModal');
@@ -1876,6 +2129,7 @@
         // Load records from SheetDB
         async function loadRecords() {
             try {
+                showLoading();
                 const response = await fetch(SHEETDB_API_URL);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -1908,13 +2162,32 @@
                 updateForecast();
                 updateDashboard();
                 populateFilters();
+                hideLoading();
             } catch (error) {
                 console.error('Error loading records:', error);
                 showToast('Error loading data from server', true);
+                hideLoading();
                 
                 // Load sample data if API fails
                 loadSampleData();
             }
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            const recordsBody = document.getElementById('recordsBody');
+            recordsBody.innerHTML = `
+                <tr>
+                    <td colspan="15">
+                        <div class="spinner"></div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            // Loading will be replaced when records are displayed
         }
 
         // Load sample data if API fails
@@ -1947,7 +2220,7 @@
                     hospitalName: 'Unity Medical Center',
                     productName: 'PHACO',
                     distributorName: 'Health Solutions Inc.',
-                    salesPerson: 'John Doe',
+                    salesPerson: 'Jane Smith',
                     pipelineStage: 'quoted',
                     potentialValue: 275000,
                     winningPercentage: 60,
@@ -1967,7 +2240,7 @@
                     hospitalName: 'Children\'s Healthcare',
                     productName: 'A/B SCAN',
                     distributorName: 'Pediatric Medical Supplies',
-                    salesPerson: 'Jane Smith',
+                    salesPerson: 'John Doe',
                     pipelineStage: 'prospecting',
                     potentialValue: 89000,
                     winningPercentage: 25,
@@ -1994,6 +2267,7 @@
             const hospitalFilter = document.getElementById('hospitalFilter');
             const productFilter = document.getElementById('productFilter');
             const distributorFilter = document.getElementById('distributorFilter');
+            const salesPersonFilter = document.getElementById('salesPersonFilter');
             
             // Clear existing options except the first one
             while (hospitalFilter.options.length > 1) {
@@ -2008,8 +2282,13 @@
                 distributorFilter.remove(1);
             }
             
+            while (salesPersonFilter.options.length > 1) {
+                salesPersonFilter.remove(1);
+            }
+            
             const hospitals = [...new Set(records.map(record => record.hospitalName))];
             const distributors = [...new Set(records.map(record => record.distributorName))];
+            const salesPersons = [...new Set(records.map(record => record.salesPerson))];
             
             hospitals.forEach(hospital => {
                 const option = document.createElement('option');
@@ -2026,6 +2305,38 @@
                     distributorFilter.appendChild(option);
                 }
             });
+            
+            salesPersons.forEach(salesPerson => {
+                if (salesPerson) {
+                    const option = document.createElement('option');
+                    option.value = salesPerson;
+                    option.textContent = salesPerson;
+                    salesPersonFilter.appendChild(option);
+                }
+            });
+        }
+
+        // Search records
+        function searchRecords() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) {
+                displayRecords();
+                return;
+            }
+            
+            const filteredRecords = records.filter(record => {
+                return (
+                    record.drName.toLowerCase().includes(searchTerm) ||
+                    record.hospitalName.toLowerCase().includes(searchTerm) ||
+                    record.productName.toLowerCase().includes(searchTerm) ||
+                    record.distributorName.toLowerCase().includes(searchTerm) ||
+                    record.salesPerson.toLowerCase().includes(searchTerm) ||
+                    record.pipelineStage.toLowerCase().includes(searchTerm) ||
+                    record.notes.toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            displayFilteredRecords(filteredRecords);
         }
 
         // Update forecast percentages based on stage for add modal
@@ -2092,26 +2403,13 @@
 
         // Display records in the table
         function displayRecords() {
-            const recordsBody = document.getElementById('recordsBody');
-            const noRecords = document.getElementById('noRecords');
-            
-            if (records.length === 0) {
-                noRecords.style.display = 'block';
-                recordsBody.innerHTML = '';
-                return;
-            }
-            
-            noRecords.style.display = 'none';
-            recordsBody.innerHTML = '';
-            
             // Apply filters
             let filteredRecords = [...records];
             const stageFilter = document.getElementById('stageFilter').value;
             const hospitalFilter = document.getElementById('hospitalFilter').value;
             const productFilter = document.getElementById('productFilter').value;
             const distributorFilter = document.getElementById('distributorFilter').value;
-            const dateFilter = document.getElementById('dateFilter').value;
-            const sortBy = document.getElementById('sortBy').value;
+            const salesPersonFilter = document.getElementById('salesPersonFilter').value;
             
             if (stageFilter) {
                 filteredRecords = filteredRecords.filter(record => record.pipelineStage === stageFilter);
@@ -2129,39 +2427,26 @@
                 filteredRecords = filteredRecords.filter(record => record.distributorName === distributorFilter);
             }
             
-            if (dateFilter !== 'all') {
-                const now = new Date();
-                filteredRecords = filteredRecords.filter(record => {
-                    const recordDate = new Date(record.date);
-                    
-                    if (dateFilter === 'month') {
-                        return recordDate.getMonth() === now.getMonth() && 
-                               recordDate.getFullYear() === now.getFullYear();
-                    } else if (dateFilter === 'quarter') {
-                        const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
-                        const recordQuarter = Math.floor(recordDate.getMonth() / 3) + 1;
-                        return recordQuarter === currentQuarter && 
-                               recordDate.getFullYear() === now.getFullYear();
-                    } else if (dateFilter === 'year') {
-                        return recordDate.getFullYear() === now.getFullYear();
-                    }
-                    return true;
-                });
+            if (salesPersonFilter) {
+                filteredRecords = filteredRecords.filter(record => record.salesPerson === salesPersonFilter);
             }
             
-            // Apply sorting
-            filteredRecords.sort((a, b) => {
-                if (sortBy === 'date') {
-                    return new Date(b.date) - new Date(a.date);
-                } else if (sortBy === 'value') {
-                    return b.potentialValue - a.potentialValue;
-                } else if (sortBy === 'forecast') {
-                    return b.weightedForecast - a.weightedForecast;
-                } else if (sortBy === 'doctor') {
-                    return a.drName.localeCompare(b.drName);
-                }
-                return 0;
-            });
+            displayFilteredRecords(filteredRecords);
+        }
+
+        // Display filtered records
+        function displayFilteredRecords(filteredRecords) {
+            const recordsBody = document.getElementById('recordsBody');
+            const noRecords = document.getElementById('noRecords');
+            
+            if (filteredRecords.length === 0) {
+                noRecords.style.display = 'block';
+                recordsBody.innerHTML = '';
+                return;
+            }
+            
+            noRecords.style.display = 'none';
+            recordsBody.innerHTML = '';
             
             filteredRecords.forEach(record => {
                 const row = document.createElement('tr');
@@ -2214,13 +2499,19 @@
                     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(' ');
                 
+                // Highlight current user's records
+                const isCurrentUserRecord = record.salesPerson === currentUser.name;
+                const salesPersonDisplay = isCurrentUserRecord 
+                    ? `<span class="salesperson-badge">${record.salesPerson}</span>` 
+                    : record.salesPerson;
+                
                 row.innerHTML = `
                     <td>${formattedDate}</td>
                     <td>${record.drName}</td>
                     <td>${record.hospitalName}</td>
                     <td>${record.productName || '-'}</td>
                     <td>${record.distributorName || '-'}</td>
-                    <td>${record.salesPerson || '-'}</td>
+                    <td>${salesPersonDisplay}</td>
                     <td><span class="status-badge ${statusClass}">${stageText}</span></td>
                     <td>${formatCurrency(record.potentialValue)}</td>
                     <td>${record.winningPercentage}%</td>

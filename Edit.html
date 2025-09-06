@@ -1270,6 +1270,10 @@
                 display: none;
             }
         }
+        #pipelineStageChart {
+    cursor: pointer;
+}
+
     </style>
 </head>
 <body>
@@ -2027,9 +2031,9 @@
 
     <script>
         // SheetDB API configuration
-        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/hwo0eodxoxz87';
+        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/x3envsahh0yrl';
         const USER_API_URL = 'https://sheetdb.io/api/v1/98w1a12uaslbe';
-        const PRODUCT_API_URL = 'https://sheetdb.io/api/v1/YOUR_PRODUCT_SHEET_ID'; // Replace with your product sheet ID
+        const PRODUCT_API_URL = 'https://sheetdb.io/api/v1/svtry1tyrxfjy'; // Replace with your product sheet ID
         
         let records = [];
         let products = [];
@@ -3134,36 +3138,85 @@
            
         }
         
-        // Initialize all charts
-        function initCharts() {
-            // Pipeline by Stage Chart
-            const pipelineStageCtx = document.getElementById('pipelineStageChart').getContext('2d');
-            pipelineStageChart = new Chart(pipelineStageCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Prospecting', 'Demo Request', 'Demo On', 'Demo Completed', 'Quoted', 'Quote', 'Negotiation', 'Ordered', 'Delivered', 'Lost'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#ffeaa7', '#81ecec', '#74b9ff', '#a29bfe', '#fd79a8', '#fdcb6e', '#00cec9', '#55efc4', '#00b894', '#dfe6e9'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                        },
-                        title: {
-                            display: false
-                        }
-                    }
-                }
-            });
+        // Add this function to handle pie chart clicks
+function setupPieChartClickHandler() {
+    const pieChartCanvas = document.getElementById('pipelineStageChart');
+    pieChartCanvas.onclick = function(evt) {
+        const points = pipelineStageChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+        
+        if (points.length) {
+            const firstPoint = points[0];
+            const label = pipelineStageChart.data.labels[firstPoint.index];
+            const stage = label.toLowerCase().replace(' ', '-');
             
+            // Set the stage filter
+            document.getElementById('stageFilter').value = stage;
+            
+            // Switch to records tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector('[data-tab="records"]').classList.add('active');
+            document.getElementById('records-tab').classList.add('active');
+            
+            // Apply the filter
+            displayRecords();
+        }
+    };
+}
+
+// Update the initCharts function to include the click handler
+// Replace the existing pipelineStageChart initialization with this:
+function initCharts() {
+    // Pipeline by Stage Chart
+    const pipelineStageCtx = document.getElementById('pipelineStageChart').getContext('2d');
+    pipelineStageChart = new Chart(pipelineStageCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Prospecting', 'Demo Request', 'Demo On', 'Demo Completed', 'Quoted', 'Quote', 'Negotiation', 'Ordered', 'Delivered', 'Lost'],
+            datasets: [{
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                backgroundColor: [
+                    '#ffeaa7', '#81ecec', '#74b9ff', '#a29bfe', '#fd79a8', '#fdcb6e', '#00cec9', '#55efc4', '#00b894', '#dfe6e9'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: false
+                }
+            },
+            // Add onClick event to the chart options
+            onClick: function(evt, elements) {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const label = this.data.labels[index];
+                    const stage = label.toLowerCase().replace(' ', '-');
+                    
+                    // Set the stage filter
+                    document.getElementById('stageFilter').value = stage;
+                    
+                    // Switch to records tab
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.querySelector('[data-tab="records"]').classList.add('active');
+                    document.getElementById('records-tab').classList.add('active');
+                    
+                    // Display the filtered records
+                    displayRecords();
+                }
+            }
+        }
+    });
+    
+    // ... rest of your chart initialization code
+
             // Monthly Trend Chart
             const monthlyTrendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
             monthlyTrendChart = new Chart(monthlyTrendCtx, {
@@ -3515,6 +3568,7 @@
             // Redirect to login page
             window.location.href = 'index.html';
         }
+        
     </script>
 </body>
 </html>

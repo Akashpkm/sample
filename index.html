@@ -140,6 +140,10 @@
             transform: translateY(-2px);
         }
         
+        .btn-admin {
+            background: linear-gradient(135deg, var(--warning), var(--danger));
+        }
+        
         .login-footer {
             text-align: center;
             margin-top: 20px;
@@ -154,6 +158,24 @@
         }
         
         .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .admin-toggle {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .admin-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .admin-toggle-btn:hover {
             text-decoration: underline;
         }
         
@@ -186,7 +208,7 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-container" id="userLoginContainer">
         <div class="login-header">
             <h1><i class="fas fa-hospital-user"></i> Hospital Pipeline</h1>
             <p>Sign in to access your sales pipeline dashboard</p>
@@ -209,8 +231,41 @@
                 </button>
             </form>
             
+            <div class="admin-toggle">
+                <button class="admin-toggle-btn" id="showAdminLogin">Admin Login</button>
+            </div>
+            
             <div class="login-footer">
                 <p>Don't have an account? <a id="showSignup">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-container" id="adminLoginContainer" style="display: none;">
+        <div class="login-header">
+            <h1><i class="fas fa-hospital-user"></i> Hospital Pipeline</h1>
+            <p>Admin Login</p>
+        </div>
+        
+        <div class="login-body">
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Admin Email</label>
+                    <input type="email" class="form-control" id="adminEmail" placeholder="Enter admin email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Admin Password</label>
+                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password" required>
+                </div>
+                
+                <button type="submit" class="btn-login btn-admin">
+                    <i class="fas fa-sign-in-alt"></i> Admin Sign In
+                </button>
+            </form>
+            
+            <div class="admin-toggle">
+                <button class="admin-toggle-btn" id="showUserLogin">User Login</button>
             </div>
         </div>
     </div>
@@ -261,17 +316,34 @@
     </div>
 
     <script>
-        const USER_API_URL = 'https://sheetdb.io/api/v1/98w1a12uaslbe';
+        const USER_API_URL = 'https://sheetdb.io/api/v1/taoxnspu24a1r';
+        const ADMIN_EMAIL = 'admin@hospital.com'; // Default admin email
+        const ADMIN_PASSWORD = 'admin123'; // Default admin password
         
         // Toggle between login and signup forms
         document.getElementById('showSignup').addEventListener('click', function() {
-            document.getElementById('loginForm').closest('.login-container').style.display = 'none';
+            document.getElementById('userLoginContainer').style.display = 'none';
+            document.getElementById('adminLoginContainer').style.display = 'none';
             document.getElementById('signupContainer').style.display = 'block';
         });
         
         document.getElementById('showLogin').addEventListener('click', function() {
             document.getElementById('signupContainer').style.display = 'none';
-            document.getElementById('loginForm').closest('.login-container').style.display = 'block';
+            document.getElementById('adminLoginContainer').style.display = 'none';
+            document.getElementById('userLoginContainer').style.display = 'block';
+        });
+        
+        // Toggle between user and admin login
+        document.getElementById('showAdminLogin').addEventListener('click', function() {
+            document.getElementById('userLoginContainer').style.display = 'none';
+            document.getElementById('signupContainer').style.display = 'none';
+            document.getElementById('adminLoginContainer').style.display = 'block';
+        });
+        
+        document.getElementById('showUserLogin').addEventListener('click', function() {
+            document.getElementById('adminLoginContainer').style.display = 'none';
+            document.getElementById('signupContainer').style.display = 'none';
+            document.getElementById('userLoginContainer').style.display = 'block';
         });
         
         // Show toast notification
@@ -314,6 +386,12 @@
                 const user = users.find(u => u.email === email && u.password === password);
                 
                 if (user) {
+                    // Check if user is approved
+                    if (user.status !== 'approved') {
+                        showToast('Your account is pending approval by administrator', true);
+                        return;
+                    }
+                    
                     // Store user data in localStorage
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     
@@ -325,6 +403,28 @@
             } catch (error) {
                 console.error('Login error:', error);
                 showToast('Error during login. Please try again.', true);
+            }
+        });
+        
+        // Handle admin login form submission
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            // Check if admin credentials match
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                // Store admin data in localStorage
+                localStorage.setItem('currentAdmin', JSON.stringify({
+                    email: email,
+                    isAdmin: true
+                }));
+                
+                // Redirect to admin approval page
+                window.location.href = 'approval.html';
+            } else {
+                showToast('Invalid admin credentials', true);
             }
         });
         
@@ -357,12 +457,13 @@
                     return;
                 }
                 
-                // Create new user
+                // Create new user with pending status
                 const newUser = {
                     id: Date.now().toString(),
                     name: name,
                     email: email,
                     password: password,
+                    status: 'pending', // New accounts require admin approval
                     created_at: new Date().toISOString()
                 };
                 
@@ -383,11 +484,12 @@
                 const result = await createResponse.json();
                 
                 if (result.created > 0) {
-                    showToast('Account created successfully! Please sign in.');
+                    showToast('Account created successfully! Waiting for admin approval.');
                     
                     // Switch back to login form
                     document.getElementById('signupContainer').style.display = 'none';
-                    document.getElementById('loginForm').closest('.login-container').style.display = 'block';
+                    document.getElementById('adminLoginContainer').style.display = 'none';
+                    document.getElementById('userLoginContainer').style.display = 'block';
                     
                     // Pre-fill the email field
                     document.getElementById('loginEmail').value = email;

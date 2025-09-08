@@ -316,7 +316,7 @@
     </div>
 
     <script>
-        const USER_API_URL = 'https://sheetdb.io/api/v1/taoxnspu24a1r';
+        const USER_API_URL = 'https://sheetdb.io/api/v1/rdh2pafbx2uj9';
         const ADMIN_EMAIL = 'admin@hospital.com'; // Default admin email
         const ADMIN_PASSWORD = 'admin123'; // Default admin password
         
@@ -501,6 +501,21 @@
                 showToast('Error creating account. Please try again.', true);
             }
         });
+        // Add this to your index.html to detect force logout events
+window.addEventListener('storage', function(e) {
+    if (e.key === 'forceLogout' && e.newValue) {
+        const logoutEvent = JSON.parse(e.newValue);
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        if (logoutEvent.email === currentUser.email) {
+            localStorage.removeItem('currentUser');
+            // Show a message to the user
+            alert('You have been logged out by an administrator.');
+            // Redirect to login page if needed
+            window.location.reload();
+        }
+    }
+});
     </script>
 </body>
 </html>

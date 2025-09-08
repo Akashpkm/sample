@@ -22,6 +22,12 @@
             --border-radius: 12px;
             --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-success: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            --gradient-warning: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
+            --gradient-danger: linear-gradient(135deg, #e63946 0%, #d00000 100%);
+            --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --gradient-header: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
         }
 
         * {
@@ -38,7 +44,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--gradient-header);
             color: white;
             padding: 20px;
             border-radius: var(--border-radius);
@@ -47,12 +53,27 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
         }
         
         .logo-container {
             display: flex;
             align-items: center;
             gap: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         .logo {
@@ -66,6 +87,11 @@
             font-size: 24px;
             color: var(--primary);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: rotate(15deg) scale(1.1);
         }
         
         .header h1 {
@@ -80,6 +106,8 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         .admin-avatar {
@@ -92,6 +120,12 @@
             justify-content: center;
             font-size: 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+        
+        .admin-avatar:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .logout-btn {
@@ -110,6 +144,8 @@
         
         .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         
         .container {
@@ -125,7 +161,7 @@
         }
         
         .stat-card {
-            background: var(--card-bg);
+            background: var(--gradient-card);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             padding: 25px;
@@ -134,17 +170,49 @@
             align-items: center;
             text-align: center;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
         
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+        
+        .stat-card:nth-child(1):before { background: var(--primary); }
+        .stat-card:nth-child(2):before { background: var(--warning); }
+        .stat-card:nth-child(3):before { background: var(--success); }
+        .stat-card:nth-child(4):before { background: var(--danger); }
+        
         .stat-icon {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 15px;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
         }
         
         .icon-total {
@@ -171,19 +239,30 @@
             font-size: 32px;
             margin-bottom: 5px;
             color: var(--text-primary);
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover h2 {
+            color: var(--primary);
         }
         
         .stat-card p {
             color: var(--text-secondary);
             font-size: 16px;
+            font-weight: 500;
         }
         
         .card {
-            background: var(--card-bg);
+            background: var(--gradient-card);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             padding: 25px;
             margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
@@ -201,6 +280,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
         }
         
         .search-box {
@@ -210,6 +290,13 @@
             padding: 10px 15px;
             border-radius: 8px;
             width: 300px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box:focus-within {
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
         }
         
         .search-box input {
@@ -236,14 +323,21 @@
             color: var(--text-secondary);
             font-weight: 600;
             background: var(--light);
+            position: sticky;
+            top: 0;
         }
         
         .user-table td {
             color: var(--text-primary);
         }
         
+        .user-table tr {
+            transition: var(--transition);
+        }
+        
         .user-table tr:hover {
             background: #f8f9fa;
+            transform: translateX(5px);
         }
         
         .status-badge {
@@ -251,21 +345,27 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 500;
+            display: inline-block;
+            min-width: 90px;
+            text-align: center;
         }
         
         .status-pending {
             background: rgba(247, 37, 133, 0.15);
             color: var(--warning);
+            box-shadow: 0 4px 10px rgba(247, 37, 133, 0.1);
         }
         
         .status-approved {
             background: rgba(76, 201, 240, 0.15);
             color: var(--success);
+            box-shadow: 0 4px 10px rgba(76, 201, 240, 0.1);
         }
         
         .status-blocked {
             background: rgba(230, 57, 70, 0.15);
             color: var(--danger);
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.1);
         }
         
         .action-btn {
@@ -279,34 +379,32 @@
             gap: 5px;
             transition: var(--transition);
             font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         
         .action-btn:hover {
             opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
         
         .btn-approve {
-            background: var(--success);
+            background: var(--gradient-success);
             color: white;
         }
         
         .btn-block {
-            background: var(--warning);
+            background: var(--gradient-warning);
             color: white;
         }
         
         .btn-delete {
-            background: var(--danger);
+            background: var(--gradient-danger);
             color: white;
         }
         
         .btn-edit {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-logout {
-            background: var(--info);
+            background: var(--gradient-primary);
             color: white;
         }
         
@@ -405,6 +503,12 @@
             font-size: 22px;
             cursor: pointer;
             color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        
+        .close-btn:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
         }
         
         .modal-body {
@@ -426,6 +530,12 @@
             cursor: pointer;
             font-weight: 500;
             transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
         
         .modal-btn-cancel {
@@ -434,17 +544,17 @@
         }
         
         .modal-btn-confirm {
-            background: var(--danger);
+            background: var(--gradient-danger);
             color: white;
         }
         
         .modal-btn-block {
-            background: var(--warning);
+            background: var(--gradient-warning);
             color: white;
         }
         
         .modal-btn-approve {
-            background: var(--success);
+            background: var(--gradient-success);
             color: white;
         }
         
@@ -464,6 +574,7 @@
         
         .status-online {
             background-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
         }
         
         .status-offline {
@@ -528,6 +639,27 @@
                 align-items: flex-start;
             }
         }
+
+        /* Animation for table rows */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-table tr {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .user-table tr:nth-child(1) { animation-delay: 0.05s; }
+        .user-table tr:nth-child(2) { animation-delay: 0.1s; }
+        .user-table tr:nth-child(3) { animation-delay: 0.15s; }
+        .user-table tr:nth-child(4) { animation-delay: 0.2s; }
+        .user-table tr:nth-child(5) { animation-delay: 0.25s; }
+        .user-table tr:nth-child(6) { animation-delay: 0.3s; }
+        .user-table tr:nth-child(7) { animation-delay: 0.35s; }
+        .user-table tr:nth-child(8) { animation-delay: 0.4s; }
+        .user-table tr:nth-child(9) { animation-delay: 0.45s; }
+        .user-table tr:nth-child(10) { animation-delay: 0.5s; }
     </style>
 </head>
 <body>
@@ -640,7 +772,7 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to block user: <strong id="blockUserName"></strong>?</p>
-                <p>This action will immediately log them out if they're currently active and restrict their access to the system.</p>
+                <p>This action will restrict their access to the system and block their site.</p>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-cancel" data-dismiss="modal">Cancel</button>
@@ -666,24 +798,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Logout Confirmation Modal -->
-    <div class="modal-backdrop" id="logoutModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-sign-out-alt"></i> Confirm Logout</h2>
-                <button class="close-btn" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to force logout user: <strong id="logoutUserName"></strong>?</p>
-                <p>This action will immediately log them out of the system.</p>
-            </div>
-            <div class='modal-footer'>
-                <button class="modal-btn modal-btn-cancel" data-dismiss="modal">Cancel</button>
-                <button class="modal-btn modal-btn-confirm" id="confirmLogout">Logout User</button>
-            </div>
-        </div>
-    </div>
     
     <!-- Edit User Modal -->
     <div class="modal-backdrop" id="editUserModal">
@@ -703,19 +817,6 @@
                         <label for="editUserEmail">Email Address</label>
                         <input type="email" id="editUserEmail" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label for="editUserRole">Role</label>
-                        <select id="editUserRole" class="form-control" required>
-                            <option value="doctor">Doctor</option>
-                            <option value="nurse">Nurse</option>
-                            <option value="staff">Staff</option>
-                            <option value="admin">Administrator</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editUserDepartment">Department</label>
-                        <input type="text" id="editUserDepartment" class="form-control">
-                    </div>
                 </form>
             </div>
             <div class='modal-footer'>
@@ -732,13 +833,12 @@
     </div>
 
     <script>
-        const USER_API_URL = 'https://sheetdb.io/api/v1/taoxnspu24a1r';
+        const USER_API_URL = 'https://sheetdb.io/api/v1/rdh2pafbx2uj9';
         let allUsers = [];
         let currentAdmin = null;
         let userToDelete = null;
         let userToApprove = null;
         let userToBlock = null;
-        let userToLogout = null;
         let userToEdit = null;
         
         // Check if admin is logged in
@@ -749,17 +849,6 @@
                 return;
             }
             currentAdmin = adminUser;
-            
-            // Set up auto-logout if admin is logged out from another tab
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'forceLogout' && e.newValue) {
-                    const logoutEvent = JSON.parse(e.newValue);
-                    if (logoutEvent.email === currentAdmin.email) {
-                        localStorage.removeItem('currentAdmin');
-                        window.location.href = 'index.html';
-                    }
-                }
-            });
         }
         
         // Fetch all users from the API
@@ -836,9 +925,6 @@
                             <button class="action-btn btn-edit" data-id="${user.id}">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="action-btn btn-logout" data-id="${user.id}">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </button>
                             <button class="action-btn btn-delete" data-id="${user.id}">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
@@ -877,13 +963,6 @@
                     openEditModal(userId);
                 });
             });
-            
-            document.querySelectorAll('.btn-logout').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.currentTarget.getAttribute('data-id');
-                    openLogoutModal(userId);
-                });
-            });
         }
         
         // Open delete confirmation modal
@@ -916,16 +995,6 @@
             document.getElementById('approvalModal').classList.add('show');
         }
         
-        // Open logout confirmation modal
-        function openLogoutModal(userId) {
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) return;
-            
-            userToLogout = user;
-            document.getElementById('logoutUserName').textContent = user.name;
-            document.getElementById('logoutModal').classList.add('show');
-        }
-        
         // Open edit user modal
         function openEditModal(userId) {
             const user = allUsers.find(u => u.id === userId);
@@ -935,8 +1004,6 @@
             document.getElementById('editUserId').value = user.id;
             document.getElementById('editUserName').value = user.name;
             document.getElementById('editUserEmail').value = user.email;
-            document.getElementById('editUserRole').value = user.role || 'staff';
-            document.getElementById('editUserDepartment').value = user.department || '';
             
             document.getElementById('editUserModal').classList.add('show');
         }
@@ -988,7 +1055,8 @@
                     },
                     body: JSON.stringify({
                         data: {
-                            status: 'blocked'
+                            status: 'blocked',
+                            isActive: false
                         }
                     })
                 });
@@ -1019,39 +1087,24 @@
             }
         }
         
-        // Logout user
-        async function logoutUser() {
-            if (!userToLogout) return;
+        // Force logout a specific user by email
+        function forceLogoutUser(email) {
+            // Create a logout event that will be detected by other tabs/pages
+            const logoutEvent = {
+                email: email,
+                timestamp: new Date().getTime(),
+                type: 'force_logout'
+            };
             
-            try {
-                // Force logout the user
-                forceLogoutUser(userToLogout.email);
-                
-                // Update the user's last login to null
-                await fetch(`${USER_API_URL}/id/${userToLogout.id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        data: {
-                            last_login: null,
-                            isActive: false
-                        }
-                    })
-                });
-                
-                showToast(`User ${userToLogout.name} has been logged out successfully`);
-                
-                // Refresh the users list
-                fetchUsers();
-            } catch (error) {
-                console.error('Error logging out user:', error);
-                showToast('Error logging out user. Please try again.', true);
-            } finally {
-                userToLogout = null;
-                document.getElementById('logoutModal').classList.remove('show');
-            }
+            // Store the logout event in localStorage
+            localStorage.setItem('forceLogout', JSON.stringify(logoutEvent));
+            
+            // Remove the event after a short delay to allow detection
+            setTimeout(() => {
+                localStorage.removeItem('forceLogout');
+            }, 1000);
+            
+            showToast(`User ${email} has been logged out successfully`);
         }
         
         // Approve user
@@ -1101,9 +1154,7 @@
             try {
                 const updatedData = {
                     name: document.getElementById('editUserName').value,
-                    email: document.getElementById('editUserEmail').value,
-                    role: document.getElementById('editUserRole').value,
-                    department: document.getElementById('editUserDepartment').value
+                    email: document.getElementById('editUserEmail').value
                 };
                 
                 const response = await fetch(`${USER_API_URL}/id/${userToEdit.id}`, {
@@ -1137,40 +1188,6 @@
                 userToEdit = null;
                 document.getElementById('editUserModal').classList.remove('show');
             }
-        }
-        
-        // Force logout a specific user by email
-        function forceLogoutUser(email) {
-            // Get all users from localStorage
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            // Find and update the target user's session
-            const updatedUsers = users.map(user => {
-                if (user.email === email) {
-                    return {
-                        ...user,
-                        isActive: false,
-                        last_login: null
-                    };
-                }
-                return user;
-            });
-            
-            // Save updated users
-            localStorage.setItem('users', JSON.stringify(updatedUsers));
-            
-            // If the forced-out user is currently logged in on another tab,
-            // we need to notify them - using a storage event listener
-            localStorage.setItem('forceLogout', JSON.stringify({
-                email: email,
-                timestamp: new Date().getTime()
-            }));
-            
-            // Update UI
-            showToast(`User ${email} has been logged out successfully`);
-            
-            // Refresh user list
-            fetchUsers();
         }
         
         // Show toast notification
@@ -1221,9 +1238,7 @@
                 
                 const filteredUsers = allUsers.filter(user => 
                     user.name.toLowerCase().includes(searchTerm) || 
-                    user.email.toLowerCase().includes(searchTerm) ||
-                    (user.role && user.role.toLowerCase().includes(searchTerm)) ||
-                    (user.department && user.department.toLowerCase().includes(searchTerm))
+                    user.email.toLowerCase().includes(searchTerm)
                 );
                 
                 renderUsersTable(filteredUsers);
@@ -1245,7 +1260,6 @@
             document.getElementById('confirmDelete').addEventListener('click', deleteUser);
             document.getElementById('confirmBlock').addEventListener('click', blockUser);
             document.getElementById('confirmApprove').addEventListener('click', approveUser);
-            document.getElementById('confirmLogout').addEventListener('click', logoutUser);
             document.getElementById('confirmEdit').addEventListener('click', editUser);
             
             document.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {

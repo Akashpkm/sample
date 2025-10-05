@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Pipeline Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-hospital-user"></i> Sales Pipeline Analytics Dashboard</h1>
+                <p>Comprehensive view of your sales pipeline with advanced analytics and forecasting</p>
+            </div>
+            <div class="user-info-container">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userDisplayName">User Name</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-menu" id="userMenu">
+                    <button onclick="openEditProfileModal()">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </button>
+                    <button onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-tabs">
+            <div class="tab active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
+            <div class="tab" data-tab="records"><i class="fas fa-table"></i> Pipeline Records</div>
+            <div class="tab" data-tab="forecast"><i class="fas fa-chart-line"></i> Revenue Forecast</div>
+             <div class="tab" data-tab="product-forecast"><i class="fas fa-cubes"></i> Product Forecast</div>
+            
+        </div>
+        
+        <div class="dashboard-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="kpi-container">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Total Pipeline Value</div>
+                        <div class="kpi-value" id="kpi-total-value">₹0</div>
+                        <div class="kpi-change" id="kpi-total-change">0 Opportunities</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Weighted Forecast</div>
+                        <div class="kpi-value" id="kpi-weighted-forecast">₹0</div>
+                        <div class="kpi-change" id="kpi-forecast-change">0% of Pipeline</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Win Rate</div>
+                        <div class="kpi-value" id="kpi-win-rate">0%</div>
+                        <div class="kpi-change" id="kpi-win-change">Based on 0 deals</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Average Deal Size</div>
+                        <div class="kpi-value" id="kpi-avg-deal">₹0</div>
+                        <div class="kpi-change" id="kpi-deal-change">Across all stages</div>
+                    </div>
+                </div>
+                
+                <!-- Profit Highlight Section -->
+                
+                <div class="dashboard-row">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-chart-pie"></i> Pipeline by Stage</h3>
+                        <div class="chart-container">
+                            <canvas id="pipelineStageChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-chart-line"></i> Monthly Forecast Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-row">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-hospital"></i> Value by Hospital</h3>
+                        <div class="chart-container">
+                            <canvas id="hospitalValueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-user-md"></i> Top Doctors by Potential</h3>
+                        <div class="chart-container">
+                            <canvas id="doctorsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Records Tab -->
+            <div class="tab-content" id="records-tab">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="stageFilter"><i class="fas fa-filter"></i> Pipeline Stage</label>
+                        <select class="filter-select" id="stageFilter">
+                            <option value="">All Stages</option>
+                            <option value="prospecting">Prospecting</option>
+                            <option value="demo-request">Demo Request</option>
+                            <option value="demo-on">Demo On</option>
+                            <option value="demo-completed">Demo Completed</option>
+                            <option value="quoted">Quoted</option>
+                            <option value="quote">Quote</option>
+                            <option value="negotiation">Negotiation</option>
+                            <option value="ordered">Ordered</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="lost">Lost</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="hospitalFilter"><i class="fas fa-hospital"></i> Hospital</label>
+                        <select class="filter-select" id="hospitalFilter">
+                            <option value="">All Hospitals</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="productFilter"><i class="fas fa-cube"></i> Product</label>
+                        <select class="filter-select" id="productFilter">
+                            <option value="">All Products</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="distributorFilter"><i class="fas fa-user-tie"></i> Distributor</label>
+                        <select class="filter-select" id="distributorFilter">
+                            <option value="">All Distributors</option>
+                        </select>
+                    </div>
+                    
+                    <!-- New Sales Person Filter -->
+                    <div class="filter-group">
+                        <label for="salesPersonFilter"><i class="fas fa-user"></i> Sales Person</label>
+                        <select class="filter-select" id="salesPersonFilter">
+                            <option value="">All Sales Persons</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Search Box -->
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search records...">
+                    <button class="search-btn" onclick="searchRecords()"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <!-- Buy Box Style Button -->
+                <button class="buy-box" onclick="openAddModal()">
+                    <i class="fas fa-plus-circle"></i> Add New Record
+                </button>
+                
+                <div class="table-responsive">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Doctor</th>
+                                <th>Hospital</th>
+                                <!-- New fields added here -->
+                                <th>Current Unit</th>
+                                <th>Place</th>
+                                <th>State</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <!-- End of new fields -->
+                                <th>Product</th>
+                                <th>Distributor</th>
+                                <th>Sales Person</th>
+                                <th>Stage</th>
+                                <th>Potential Value (₹)</th>
+                                <th>Winning %</th>
+                                <th>Buying %</th>
+                                <th>Total %</th>
+                                <th>Weighted Forecast (₹)</th>
+                                <th>Forecast Month</th>
+                                <th>Closed Month</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsBody">
+                            <!-- Records will be displayed here -->
+                        </tbody>
+                    </table>
+                    <div id="noRecords" class="no-records">
+                        <i class="fas fa-inbox" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <p>No records found. Add your first record to get started.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Forecast Tab -->
+            <div class="tab-content" id="forecast-tab">
+                <div class="forecast-container">
+                    <div class="forecast-card monthly-forecast">
+                        <h3><i class="fas fa-calendar-week"></i> Monthly Forecast</h3>
+                        <div class="forecast-value"><i class="fas fa-indian-rupee-sign"></i> <span id="monthlyForecast">0</span></div>
+                        <div class="forecast-bar">
+                            <div class="forecast-progress" style="width: 65%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-label">Based on current pipeline</span>
+                            <span class="progress-label" id="monthlyCount">0 opportunities</span>
+                        </div>
+                        
+                        <table class="forecast-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Value (₹)</th>
+                                    <th>Opportunities</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthlyForecastDetails">
+                                <!-- Monthly forecast details will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="forecast-card quarterly-forecast">
+                        <h3><i class="fas fa-chart-pie"></i> Quarterly Forecast</h3>
+                        <div class="forecast-value"><i class="fas fa-indian-rupee-sign"></i> <span id="quarterlyForecast">0</span></div>
+                        <div class="forecast-bar">
+                            <div class="forecast-progress" style="width: 45%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-label">Based on current pipeline</span>
+                            <span class="progress-label" id="quarterlyCount">0 opportunities</span>
+                        </div>
+                        
+                        <table class="forecast-table">
+                            <thead>
+                                <tr>
+                                    <th>Quarter</th>
+                                    <th>Value (₹)</th>
+                                    <th>Opportunities</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quarterlyForecastDetails">
+                                <!-- Quarterly forecast details will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="forecast-card annual-forecast">
+                        <h3><i class="fas fa-chart-bar"></i> Annual Forecast</h3>
+                        <div class="forecast-value"><i class="fas fa-indian-rupee-sign"></i> <span id="annualForecast">0</span></div>
+                        <div class="forecast-bar">
+                            <div class="forecast-progress" style="width: 30%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-label">Based on current pipeline</span>
+                            <span class="progress-label" id="annualCount">0 opportunities</span>
+                        </div>
+                        
+                        <table class="forecast-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Value (₹)</th>
+                                    <th>Opportunities</th>
+                                </tr>
+                            </thead>
+                            <tbody id="annualForecastDetails">
+                                <!-- Annual forecast details will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-line"></i> Forecast Trend Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="forecastTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Product Forecast Tab -->
+<div class="tab-content" id="product-forecast-tab">
+    <div class="product-forecast-grid" id="productForecastGrid">
+        <!-- Product forecast cards will be dynamically generated here -->
+    </div>
+    
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> Product Performance Analysis</h3>
+        <div class="chart-container">
+            <canvas id="productPerformanceChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="dashboard-card">
+        <h3><i class="fas fa-table"></i> Product Forecast Details</h3>
+        <div class="table-responsive">
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Total Opportunities</th>
+                        <th>Total Potential Value</th>
+                        <th>Weighted Forecast</th>
+                        <th>Average Deal Size</th>
+                        <th>Win Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="productForecastTable">
+                    <!-- Product forecast details will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    <!-- Add Record Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> Add New Record</h2>
+                <button class="close-btn" onclick="closeModal('addModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addDate" class="required"><div class="icon-wrapper"><i class="fas fa-calendar"></i></div> Date</label>
+                                <input type="date" class="form-control" id="addDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addDrName" class="required"><div class="icon-wrapper"><i class="fas fa-user-md"></i></div> Doctor Name</label>
+                                <input type="text" class="form-control" id="addDrName" placeholder="Enter doctor's name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addHospitalName" class="required"><div class="icon-wrapper"><i class="fas fa-hospital"></i></div> Hospital Name</label>
+                                <input type="text" class="form-control" id="addHospitalName" placeholder="Enter hospital name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                                <select class="form-control" id="addProductName" required>
+                                    <option value="">Select a product</option>
+                                </select>
+                                <button type="button" class="add-product-btn" onclick="showAddProductModal()">
+                                    <i class="fas fa-plus"></i> Add New Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- New Fields -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addCurrentUnit"><div class="icon-wrapper"><i class="fas fa-hospital-alt"></i></div> Current Unit</label>
+                                <input type="text" class="form-control" id="addCurrentUnit" placeholder="Enter current unit">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPlace"><div class="icon-wrapper"><i class="fas fa-map-marker-alt"></i></div> Place</label>
+                                <input type="text" class="form-control" id="addPlace" placeholder="Enter place">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addState"><div class="icon-wrapper"><i class="fas fa-globe"></i></div> State</label>
+                                <input type="text" class="form-control" id="addState" placeholder="Enter state">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPhone"><div class="icon-wrapper"><i class="fas fa-phone"></i></div> Phone Number</label>
+                                <input type="tel" class="form-control" id="addPhone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email ID</label>
+                                <input type="email" class="form-control" id="addEmail" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
+                                <input type="text" class="form-control" id="addDistributorName" placeholder="Enter distributor name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
+                                <input type="text" class="form-control" id="addSalesPerson" placeholder="Enter sales person name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPipelineStage" class="required"><div class="icon-wrapper"><i class="fas fa-project-diagram"></i></div> Pipeline Stage</label>
+                                <select class="form-control" id="addPipelineStage" required onchange="updateForecastPercentages()">
+                                    <option value="">Select a pipeline stage</option>
+                                    <option value="prospecting">Prospecting</option>
+                                    <option value="demo-request">Demo Request</option>
+                                    <option value="demo-on">Demo On</option>
+                                    <option value="demo-completed">Demo Completed</option>
+                                    <option value="quoted">Quoted</option>
+                                    <option value="quote">Quote</option>
+                                    <option value="negotiation">Negotiation</option>
+                                    <option value="ordered">Ordered</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="lost">Lost</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addPotentialValue" class="required"><div class="icon-wrapper"><i class="fas fa-rupee-sign"></i></div> Potential Value (₹)</label>
+                                <input type="number" class="form-control" id="addPotentialValue" placeholder="Enter amount" min="0" step="1000" required oninput="calculateAddWeightedForecast()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="percentage-row">
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="addWinningPercentage" class="required"><div class="icon-wrapper"><i class="fas fa-trophy"></i></div> Winning %</label>
+                                <div class="percentage-input">
+                                    <input type="number" class="form-control" id="addWinningPercentage" placeholder="Winning %" min="0" max="100" step="1" required oninput="calculateAddTotalPercentage()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="addBuyingPercentage" class="required"><div class="icon-wrapper"><i class="fas fa-shopping-cart"></i></div> Buying %</label>
+                                <div class="percentage-input">
+                                    <input type="number" class="form-control" id="addBuyingPercentage" placeholder="Buying %" min="0" max="100" step="1" required oninput="calculateAddTotalPercentage()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="addTotalPercentage"><div class="icon-wrapper"><i class="fas fa-calculator"></i></div> Total %</label>
+                                <input type="text" class="form-control readonly-input" id="addTotalPercentage" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addWeightedForecast"><div class="icon-wrapper"><i class="fas fa-chart-line"></i></div> Weighted Forecast (₹)</label>
+                        <input type="text" class="form-control readonly-input" id="addWeightedForecast" readonly>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addForecastMonth" class="required"><div class="icon-wrapper"><i class="fas fa-calendar-alt"></i></div> Forecast Month</label>
+                                <input type="month" class="form-control" id="addForecastMonth" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="addClosedMonth"><div class="icon-wrapper"><i class="fas fa-calendar-check"></i></div> Forecast Closed Month</label>
+                                <input type="month" class="form-control" id="addClosedMonth">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addNotes"><div class="icon-wrapper"><i class="fas fa-sticky-note"></i></div> Notes</label>
+                        <textarea class="form-control" id="addNotes" rows="3" placeholder="Add any additional notes"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('addModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="addRecord()">
+                    <i class="fas fa-save"></i> Save Record
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Record Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Record</h2>
+                <button class="close-btn" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editRecordId">
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editDate" class="required"><div class="icon-wrapper"><i class="fas fa-calendar"></i></div> Date</label>
+                                <input type="date" class="form-control" id="editDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editDrName" class="required"><div class="icon-wrapper"><i class="fas fa-user-md"></i></div> Doctor Name</label>
+                                <input type="text" class="form-control" id="editDrName" placeholder="Enter doctor's name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editHospitalName" class="required"><div class="icon-wrapper"><i class="fas fa-hospital"></i></div> Hospital Name</label>
+                                <input type="text" class="form-control" id="editHospitalName" placeholder="Enter hospital name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                                <select class="form-control" id="editProductName" required>
+                                    <option value="">Select a product</option>
+                                </select>
+                                <button type="button" class="add-product-btn" onclick="showAddProductModal()">
+                                    <i class="fas fa-plus"></i> Add New Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- New Fields -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editCurrentUnit"><div class="icon-wrapper"><i class="fas fa-hospital-alt"></i></div> Current Unit</label>
+                                <input type="text" class="form-control" id="editCurrentUnit" placeholder="Enter current unit">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPlace"><div class="icon-wrapper"><i class="fas fa-map-marker-alt"></i></div> Place</label>
+                                <input type="text" class="form-control" id="editPlace" placeholder="Enter place">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editState"><div class="icon-wrapper"><i class="fas fa-globe"></i></div> State</label>
+                                <input type="text" class="form-control" id="editState" placeholder="Enter state">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPhone"><div class="icon-wrapper"><i class="fas fa-phone"></i></div> Phone Number</label>
+                                <input type="tel" class="form-control" id="editPhone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editEmail"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email ID</label>
+                                <input type="email" class="form-control" id="editEmail" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editDistributorName" class="required"><div class="icon-wrapper"><i class="fas fa-user-tie"></i></div> Distributor Name</label>
+                                <input type="text" class="form-control" id="editDistributorName" placeholder="Enter distributor name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editSalesPerson" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Sales Person</label>
+                                <input type="text" class="form-control" id="editSalesPerson" placeholder="Enter sales person name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPipelineStage" class="required"><div class="icon-wrapper"><i class="fas fa-project-diagram"></i></div> Pipeline Stage</label>
+                                <select class="form-control" id="editPipelineStage" required onchange="updateEditForecastPercentages()">
+                                    <option value="">Select a pipeline stage</option>
+                                    <option value="prospecting">Prospecting</option>
+                                    <option value="demo-request">Demo Request</option>
+                                    <option value="demo-on">Demo On</option>
+                                    <option value="demo-completed">Demo Completed</option>
+                                    <option value="quoted">Quoted</option>
+                                    <option value="quote">Quote</option>
+                                    <option value="negotiation">Negotiation</option>
+                                    <option value="ordered">Ordered</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="lost">Lost</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editPotentialValue" class="required"><div class="icon-wrapper"><i class="fas fa-rupee-sign"></i></div> Potential Value (₹)</label>
+                                <input type="number" class="form-control" id="editPotentialValue" placeholder="Enter amount" min="0" step="1000" required oninput="calculateEditWeightedForecast()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="percentage-row">
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="editWinningPercentage" class="required"><div class="icon-wrapper"><i class="fas fa-trophy"></i></div> Winning %</label>
+                                <div class="percentage-input">
+                                    <input type="number" class="form-control" id="editWinningPercentage" placeholder="Winning %" min="0" max="100" step="1" required oninput="calculateEditTotalPercentage()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="editBuyingPercentage" class="required"><div class="icon-wrapper"><i class="fas fa-shopping-cart"></i></div> Buying %</label>
+                                <div class="percentage-input">
+                                    <input type="number" class="form-control" id="editBuyingPercentage" placeholder="Buying %" min="0" max="100" step="1" required oninput="calculateEditTotalPercentage()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="percentage-col">
+                            <div class="form-group">
+                                <label for="editTotalPercentage"><div class="icon-wrapper"><i class="fas fa-calculator"></i></div> Total %</label>
+                                <input type="text" class="form-control readonly-input" id="editTotalPercentage" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editWeightedForecast"><div class="icon-wrapper"><i class="fas fa-chart-line"></i></div> Weighted Forecast (₹)</label>
+                        <input type="text" class="form-control readonly-input" id="editWeightedForecast" readonly>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editForecastMonth" class="required"><div class="icon-wrapper"><i class="fas fa-calendar-alt"></i></div> Forecast Month</label>
+                                <input type="month" class="form-control" id="editForecastMonth" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="editClosedMonth"><div class="icon-wrapper"><i class="fas fa-calendar-check"></i></div> Forecast Closed Month</label>
+                                <input type="month" class="form-control" id="editClosedMonth">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNotes"><div class="icon-wrapper"><i class="fas fa-sticky-note"></i></div> Notes</label>
+                        <textarea class="form-control" id="editNotes" rows="3" placeholder="Add any additional notes"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div id="editUpdateDateContainer">
+                            <span class="last-updated">Last updated: <span id="editLastUpdated"></span></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('editModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="updateRecord()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Add New Product</h2>
+                <button class="close-btn" onclick="closeModal('addProductModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="newProductName" class="required"><div class="icon-wrapper"><i class="fas fa-cube"></i></div> Product Name</label>
+                        <input type="text" class="form-control" id="newProductName" placeholder="Enter new product name" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('addProductModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="addNewProduct()">
+                    <i class="fas fa-save"></i> Add Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+                <button class="close-btn" onclick="closeModal('editProfileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editProfileName" class="required"><div class="icon-wrapper"><i class="fas fa-user"></i></div> Full Name</label>
+                        <input type="text" class="form-control" id="editProfileName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfileEmail" class="required"><div class="icon-wrapper"><i class="fas fa-envelope"></i></div> Email</label>
+                        <input type="email" class="form-control" id="editProfileEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfilePassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> New Password</label>
+                        <input type="password" class="form-control" id="editProfilePassword" placeholder="Leave blank to keep current password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editProfileConfirmPassword"><div class="icon-wrapper"><i class="fas fa-lock"></i></div> Confirm New Password</label>
+                        <input type="password" class="form-control" id="editProfileConfirmPassword" placeholder="Confirm new password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('editProfileModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-modal btn-save" onclick="updateProfile()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+    </div>
+
+    <script src="Dashboard.js"></script>
+    </body>
+    </html>

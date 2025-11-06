@@ -1306,7 +1306,8 @@ function printTable() {
         </head>
         <body>
             <div class="print-header">
-                <h1>Sales Pipeline Analytics Report</h1>
+            <h1>KINYA MEDAICAL SYSTEMS AND SOLUTIONS</h1>
+                <h4>Sales Pipeline Analytics Report</h4>
                 <div class="print-info">
                     <div>Generated on: ${printDate}</div>
                     <div>Total Records: ${filteredRecords.length}</div>

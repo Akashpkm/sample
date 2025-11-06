@@ -29,6 +29,7 @@ let forecastTrendChart, productPerformanceChart;
 document.addEventListener('DOMContentLoaded', function() {
     initializeApplication();
     setupEventListeners();
+    setupCustomMultiSelectFilters();
 });
 
 function initializeApplication() {
@@ -48,24 +49,25 @@ function initializeApplication() {
 }
 
 function setupEventListeners() {
-    // Filter event listeners
-    ['stageFilter', 'hospitalFilter', 'productFilter', 'distributorFilter', 'salesPersonFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', displayRecords);
-    });
-    
     // Search functionality
     document.getElementById('searchInput').addEventListener('keyup', function(event) {
         if (event.key === 'Enter') searchRecords();
     });
+    
+    // Print button
+    document.getElementById('printBtn').addEventListener('click', printTable);
     
     // Close user menu when clicking outside
     document.addEventListener('click', function(event) {
         const userMenu = document.getElementById('userMenu');
         const userInfo = document.querySelector('.user-info');
         
-        if (!userInfo.contains(event.target) && !userMenu.contains(event.target)) {
+        if (userInfo && !userInfo.contains(event.target) && userMenu && !userMenu.contains(event.target)) {
             userMenu.classList.remove('active');
         }
+        
+        // Close dropdowns when clicking outside
+        closeAllDropdowns(event);
     });
 
     // Tab switching functionality
@@ -94,32 +96,135 @@ function setupEventListeners() {
     });
 }
 
-function setupStickyHeaders() {
-    const recordsTab = document.getElementById('records-tab');
-    const addButton = recordsTab.querySelector('.buy-box');
-    const tableHeader = recordsTab.querySelector('thead');
+// Custom Multi-select Functions
+function setupCustomMultiSelectFilters() {
+    // Initialize stage dropdown
+    initializeStageDropdown();
     
-    // Make add button sticky
-    if (addButton) {
-        addButton.style.position = 'sticky';
-        addButton.style.top = '0';
-        addButton.style.zIndex = '100';
-        addButton.style.backgroundColor = '#fff';
-    }
+    // Other dropdowns will be populated when records are loaded
+}
+
+function initializeStageDropdown() {
+    const stageOptions = [
+        { value: 'prospecting', text: 'Prospecting' },
+        { value: 'demo-request', text: 'Demo Request' },
+        { value: 'demo-on', text: 'Demo On' },
+        { value: 'demo-completed', text: 'Demo Completed' },
+        { value: 'quoted', text: 'Quoted' },
+        { value: 'quote', text: 'Quote' },
+        { value: 'negotiation', text: 'Negotiation' },
+        { value: 'ordered', text: 'Ordered' },
+        { value: 'delivered', text: 'Delivered' },
+        { value: 'lost', text: 'Lost' }
+    ];
     
-    // Make table header sticky
-    if (tableHeader) {
-        tableHeader.style.position = 'sticky';
-        tableHeader.style.top = addButton ? '60px' : '0';
-        tableHeader.style.zIndex = '90';
-        tableHeader.style.backgroundColor = '#f8f9fa';
+    // Add event listeners to stage checkboxes
+    document.querySelectorAll('#stageDropdown input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectedText('stage');
+            displayRecords();
+        });
+    });
+}
+
+function toggleDropdown(type) {
+    // Close all other dropdowns first
+    closeAllDropdowns();
+    
+    const dropdown = document.getElementById(`${type}Dropdown`);
+    const selectBox = dropdown.parentElement.querySelector('.select-box');
+    
+    // Toggle current dropdown
+    dropdown.classList.toggle('active');
+    selectBox.classList.toggle('active');
+    
+    // Focus search input if it exists
+    const searchInput = dropdown.querySelector('input[type="text"]');
+    if (searchInput && dropdown.classList.contains('active')) {
+        setTimeout(() => searchInput.focus(), 100);
     }
 }
 
-// Toggle user menu
-function toggleUserMenu() {
-    const userMenu = document.getElementById('userMenu');
-    userMenu.classList.toggle('active');
+function closeAllDropdowns(event) {
+    if (event) {
+        // Check if click was inside a dropdown
+        const isInsideDropdown = event.target.closest('.custom-multiselect');
+        if (isInsideDropdown) return;
+    }
+    
+    // Close all dropdowns
+    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+        dropdown.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.select-box').forEach(selectBox => {
+        selectBox.classList.remove('active');
+    });
+}
+
+function filterDropdown(type, searchTerm) {
+    const dropdown = document.getElementById(`${type}Dropdown`);
+    const options = dropdown.querySelectorAll('.dropdown-option');
+    const searchLower = searchTerm.toLowerCase();
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        if (text.includes(searchLower)) {
+            option.style.display = 'flex';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+}
+
+function updateSelectedText(type) {
+    const dropdown = document.getElementById(`${type}Dropdown`);
+    const selectedText = dropdown.parentElement.querySelector('.selected-text');
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+    
+    if (checkboxes.length === 0) {
+        selectedText.textContent = `All ${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+    } else if (checkboxes.length === 1) {
+        selectedText.textContent = checkboxes[0].parentElement.textContent.trim();
+    } else {
+        selectedText.textContent = `${checkboxes.length} selected`;
+    }
+}
+
+function getSelectedValues(type) {
+    const dropdown = document.getElementById(`${type}Dropdown`);
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+    const values = [];
+    
+    checkboxes.forEach(checkbox => {
+        if (checkbox.value) { // Exclude "All" option which has empty value
+            values.push(checkbox.value);
+        }
+    });
+    
+    return values;
+}
+
+function clearAllFilters() {
+    // Uncheck all checkboxes in all dropdowns
+    document.querySelectorAll('.dropdown-content input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Update selected text for all dropdowns
+    updateSelectedText('stage');
+    updateSelectedText('hospital');
+    updateSelectedText('product');
+    updateSelectedText('distributor');
+    updateSelectedText('salesPerson');
+    
+    // Clear search
+    document.getElementById('searchInput').value = '';
+    
+    // Refresh records display
+    displayRecords();
+    
+    showToast('All filters cleared');
 }
 
 // Enhanced Product Forecast Functions
@@ -266,7 +371,6 @@ function updateProductForecast() {
             <td>${formatCurrency(data.weightedForecast)}</td>
             <td>${formatCurrency(data.averageDealSize)}</td>
             <td>${data.winRate.toFixed(1)}%</td>
-            <td><span class="trend-badge ${data.monthlyTrend}">${data.monthlyTrend}</span></td>
         `;
         productForecastTable.appendChild(row);
     });
@@ -341,7 +445,11 @@ function initCharts() {
                     const stage = label.toLowerCase().replace(' ', '-');
                     
                     // Set the stage filter
-                    document.getElementById('stageFilter').value = stage;
+                    const stageCheckbox = document.querySelector(`#stageDropdown input[value="${stage}"]`);
+                    if (stageCheckbox) {
+                        stageCheckbox.checked = true;
+                        updateSelectedText('stage');
+                    }
                     
                     // Switch to records tab
                     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -572,18 +680,15 @@ async function saveProducts() {
 function setupProductDropdowns() {
     const addProductDropdown = document.getElementById('addProductName');
     const editProductDropdown = document.getElementById('editProductName');
-    const filterProductDropdown = document.getElementById('productFilter');
     
     // Clear existing options except the first one
     addProductDropdown.innerHTML = '<option value="">Select a product</option>';
     editProductDropdown.innerHTML = '<option value="">Select a product</option>';
-    filterProductDropdown.innerHTML = '<option value="">All Products</option>';
     
     // Add products to dropdowns
     products.forEach(product => {
         addProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
         editProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
-        filterProductDropdown.innerHTML += `<option value="${product}">${product}</option>`;
     });
 }
 
@@ -611,6 +716,9 @@ async function addNewProduct() {
     products.push(newProduct);
     await saveProducts();
     setupProductDropdowns();
+    
+    // Update product filter dropdown
+    updateProductFilterDropdown();
     
     closeModal('addProductModal');
     showToast('Product added successfully!');
@@ -703,7 +811,7 @@ function showLoading() {
     const recordsBody = document.getElementById('recordsBody');
     recordsBody.innerHTML = `
         <tr>
-            <td colspan="15">
+            <td colspan="20">
                 <div class="spinner"></div>
             </td>
         </tr>
@@ -744,8 +852,7 @@ function loadSampleData() {
             notes: 'Discussed new equipment needs. Follow up next week.',
             createdAt: '2023-05-10T08:30:00',
             updatedAt: '2023-05-14T16:45:00'
-        },
-        // ... (other sample records)
+        }
     ];
     
     displayRecords();
@@ -755,57 +862,138 @@ function loadSampleData() {
     showToast('Loaded sample data. API connection failed.', true);
 }
 
-// Populate filter dropdowns
+// Populate filter dropdowns with case-insensitive deduplication
 function populateFilters() {
-    const hospitalFilter = document.getElementById('hospitalFilter');
-    const productFilter = document.getElementById('productFilter');
-    const distributorFilter = document.getElementById('distributorFilter');
-    const salesPersonFilter = document.getElementById('salesPersonFilter');
+    updateHospitalFilterDropdown();
+    updateProductFilterDropdown();
+    updateDistributorFilterDropdown();
+    updateSalesPersonFilterDropdown();
+}
+
+function updateHospitalFilterDropdown() {
+    const hospitalOptions = document.getElementById('hospitalOptions');
     
     // Clear existing options except the first one
-    while (hospitalFilter.options.length > 1) {
-        hospitalFilter.remove(1);
-    }
+    hospitalOptions.innerHTML = '<label class="dropdown-option"><input type="checkbox" value=""> All Hospitals</label>';
     
-    while (productFilter.options.length > 1) {
-        productFilter.remove(1);
-    }
+    // Create case-insensitive sets to avoid duplicates
+    const hospitals = new Map();
     
-    while (distributorFilter.options.length > 1) {
-        distributorFilter.remove(1);
-    }
-    
-    while (salesPersonFilter.options.length > 1) {
-        salesPersonFilter.remove(1);
-    }
-    
-    const hospitals = [...new Set(records.map(record => record.hospitalName))];
-    const distributors = [...new Set(records.map(record => record.distributorName))];
-    const salesPersons = [...new Set(records.map(record => record.salesPerson))];
-    
-    hospitals.forEach(hospital => {
-        const option = document.createElement('option');
-        option.value = hospital;
-        option.textContent = hospital;
-        hospitalFilter.appendChild(option);
-    });
-    
-    distributors.forEach(distributor => {
-        if (distributor) {
-            const option = document.createElement('option');
-            option.value = distributor;
-            option.textContent = distributor;
-            distributorFilter.appendChild(option);
+    records.forEach(record => {
+        // Hospital deduplication (case-insensitive)
+        if (record.hospitalName) {
+            const key = record.hospitalName.toLowerCase().trim();
+            if (!hospitals.has(key)) {
+                hospitals.set(key, record.hospitalName);
+            }
         }
     });
     
-    salesPersons.forEach(salesPerson => {
-        if (salesPerson) {
-            const option = document.createElement('option');
-            option.value = salesPerson;
-            option.textContent = salesPerson;
-            salesPersonFilter.appendChild(option);
+    // Add hospitals to filter
+    Array.from(hospitals.values()).sort().forEach(hospital => {
+        const option = document.createElement('label');
+        option.className = 'dropdown-option';
+        option.innerHTML = `<input type="checkbox" value="${hospital}"> ${hospital}`;
+        
+        // Add event listener
+        option.querySelector('input').addEventListener('change', function() {
+            updateSelectedText('hospital');
+            displayRecords();
+        });
+        
+        hospitalOptions.appendChild(option);
+    });
+}
+
+function updateProductFilterDropdown() {
+    const productOptions = document.getElementById('productOptions');
+    
+    // Clear existing options except the first one
+    productOptions.innerHTML = '<label class="dropdown-option"><input type="checkbox" value=""> All Products</label>';
+    
+    // Add products to filter
+    products.forEach(product => {
+        const option = document.createElement('label');
+        option.className = 'dropdown-option';
+        option.innerHTML = `<input type="checkbox" value="${product}"> ${product}`;
+        
+        // Add event listener
+        option.querySelector('input').addEventListener('change', function() {
+            updateSelectedText('product');
+            displayRecords();
+        });
+        
+        productOptions.appendChild(option);
+    });
+}
+
+function updateDistributorFilterDropdown() {
+    const distributorOptions = document.getElementById('distributorOptions');
+    
+    // Clear existing options except the first one
+    distributorOptions.innerHTML = '<label class="dropdown-option"><input type="checkbox" value=""> All Distributors</label>';
+    
+    // Create case-insensitive sets to avoid duplicates
+    const distributors = new Map();
+    
+    records.forEach(record => {
+        // Distributor deduplication (case-insensitive)
+        if (record.distributorName) {
+            const key = record.distributorName.toLowerCase().trim();
+            if (!distributors.has(key)) {
+                distributors.set(key, record.distributorName);
+            }
         }
+    });
+    
+    // Add distributors to filter
+    Array.from(distributors.values()).sort().forEach(distributor => {
+        const option = document.createElement('label');
+        option.className = 'dropdown-option';
+        option.innerHTML = `<input type="checkbox" value="${distributor}"> ${distributor}`;
+        
+        // Add event listener
+        option.querySelector('input').addEventListener('change', function() {
+            updateSelectedText('distributor');
+            displayRecords();
+        });
+        
+        distributorOptions.appendChild(option);
+    });
+}
+
+function updateSalesPersonFilterDropdown() {
+    const salesPersonOptions = document.getElementById('salesPersonOptions');
+    
+    // Clear existing options except the first one
+    salesPersonOptions.innerHTML = '<label class="dropdown-option"><input type="checkbox" value=""> All Sales Persons</label>';
+    
+    // Create case-insensitive sets to avoid duplicates
+    const salesPersons = new Map();
+    
+    records.forEach(record => {
+        // Sales Person deduplication (case-insensitive)
+        if (record.salesPerson) {
+            const key = record.salesPerson.toLowerCase().trim();
+            if (!salesPersons.has(key)) {
+                salesPersons.set(key, record.salesPerson);
+            }
+        }
+    });
+    
+    // Add sales persons to filter
+    Array.from(salesPersons.values()).sort().forEach(salesPerson => {
+        const option = document.createElement('label');
+        option.className = 'dropdown-option';
+        option.innerHTML = `<input type="checkbox" value="${salesPerson}"> ${salesPerson}`;
+        
+        // Add event listener
+        option.querySelector('input').addEventListener('change', function() {
+            updateSelectedText('salesPerson');
+            displayRecords();
+        });
+        
+        salesPersonOptions.appendChild(option);
     });
 }
 
@@ -894,36 +1082,44 @@ function calculateEditWeightedForecast() {
     document.getElementById('editWeightedForecast').value = formatCurrency(weightedForecast);
 }
 
+// Get filtered records based on current multi-select filters
+function getFilteredRecords() {
+    let filteredRecords = [...records];
+    
+    // Get selected values from custom multi-select filters
+    const selectedStages = getSelectedValues('stage');
+    const selectedHospitals = getSelectedValues('hospital');
+    const selectedProducts = getSelectedValues('product');
+    const selectedDistributors = getSelectedValues('distributor');
+    const selectedSalesPersons = getSelectedValues('salesPerson');
+    
+    // Apply multi-select filters
+    if (selectedStages.length > 0) {
+        filteredRecords = filteredRecords.filter(record => selectedStages.includes(record.pipelineStage));
+    }
+    
+    if (selectedHospitals.length > 0) {
+        filteredRecords = filteredRecords.filter(record => selectedHospitals.includes(record.hospitalName));
+    }
+    
+    if (selectedProducts.length > 0) {
+        filteredRecords = filteredRecords.filter(record => selectedProducts.includes(record.productName));
+    }
+    
+    if (selectedDistributors.length > 0) {
+        filteredRecords = filteredRecords.filter(record => selectedDistributors.includes(record.distributorName));
+    }
+    
+    if (selectedSalesPersons.length > 0) {
+        filteredRecords = filteredRecords.filter(record => selectedSalesPersons.includes(record.salesPerson));
+    }
+    
+    return filteredRecords;
+}
+
 // Display records in the table
 function displayRecords() {
-    // Apply filters
-    let filteredRecords = [...records];
-    const stageFilter = document.getElementById('stageFilter').value;
-    const hospitalFilter = document.getElementById('hospitalFilter').value;
-    const productFilter = document.getElementById('productFilter').value;
-    const distributorFilter = document.getElementById('distributorFilter').value;
-    const salesPersonFilter = document.getElementById('salesPersonFilter').value;
-    
-    if (stageFilter) {
-        filteredRecords = filteredRecords.filter(record => record.pipelineStage === stageFilter);
-    }
-    
-    if (hospitalFilter) {
-        filteredRecords = filteredRecords.filter(record => record.hospitalName === hospitalFilter);
-    }
-    
-    if (productFilter) {
-        filteredRecords = filteredRecords.filter(record => record.productName === productFilter);
-    }
-    
-    if (distributorFilter) {
-        filteredRecords = filteredRecords.filter(record => record.distributorName === distributorFilter);
-    }
-    
-    if (salesPersonFilter) {
-        filteredRecords = filteredRecords.filter(record => record.salesPerson === salesPersonFilter);
-    }
-    
+    const filteredRecords = getFilteredRecords();
     displayFilteredRecords(filteredRecords);
 }
 
@@ -1032,6 +1228,145 @@ function displayFilteredRecords(filteredRecords) {
         
         recordsBody.appendChild(row);
     });
+}
+
+// Print table functionality
+function printTable() {
+    const filteredRecords = getFilteredRecords();
+    
+    if (filteredRecords.length === 0) {
+        showToast('No records to print', true);
+        return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    const printDate = new Date().toLocaleDateString();
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Sales Pipeline Report - ${printDate}</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 20px;
+                    color: #333;
+                }
+                .print-header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #4361ee;
+                    padding-bottom: 15px;
+                }
+                .print-header h1 {
+                    color: #4361ee;
+                    margin: 0 0 10px 0;
+                }
+                .print-info {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                    font-size: 14px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 15px;
+                }
+                th {
+                    background-color: #4361ee;
+                    color: white;
+                    padding: 12px 8px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                }
+                td {
+                    padding: 10px 8px;
+                    border: 1px solid #ddd;
+                }
+                tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                .total-row {
+                    background-color: #e9ecef !important;
+                    font-weight: bold;
+                }
+                .status-badge {
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: 500;
+                }
+                @media print {
+                    body { margin: 0; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-header">
+                <h1>Sales Pipeline Analytics Report</h1>
+                <div class="print-info">
+                    <div>Generated on: ${printDate}</div>
+                    <div>Total Records: ${filteredRecords.length}</div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Doctor</th>
+                        <th>Hospital</th>
+                        <th>Product</th>
+                        <th>Stage</th>
+                        <th>Potential Value (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredRecords.map(record => {
+                        const recordDate = new Date(record.date);
+                        const formattedDate = recordDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                        
+                        const stageText = record.pipelineStage.split('-')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ');
+                            
+                        return `
+                            <tr>
+                                <td>${formattedDate}</td>
+                                <td>${record.drName}</td>
+                                <td>${record.hospitalName}</td>
+                                <td>${record.productName || '-'}</td>
+                                <td>${stageText}</td>
+                                <td>${formatCurrency(record.potentialValue)}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                    <tr class="total-row">
+                        <td colspan="5" style="text-align: right;">Total Potential Value:</td>
+                        <td>${formatCurrency(filteredRecords.reduce((sum, record) => sum + record.potentialValue, 0))}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 30px; font-size: 12px; text-align: center; color: #666;">
+                Generated by Sales Pipeline Analytics Dashboard
+            </div>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Wait for content to load before printing
+    setTimeout(() => {
+        printWindow.print();
+        // printWindow.close(); // Uncomment if you want to automatically close after printing
+    }, 500);
 }
 
 // Open add modal
@@ -1748,4 +2083,20 @@ function logout() {
     
     // Redirect to login page
     window.location.href = 'index.html';
+}
+
+// Toggle user menu
+function toggleUserMenu() {
+    const userMenu = document.getElementById('userMenu');
+    userMenu.classList.toggle('active');
+}
+
+function setupStickyHeaders() {
+    const recordsTab = document.getElementById('records-tab');
+    const actionsContainer = recordsTab.querySelector('.actions-container');
+    const filters = recordsTab.querySelector('.filters');
+    const tableHeader = recordsTab.querySelector('thead');
+    
+    // Make action buttons sticky
+    
 }

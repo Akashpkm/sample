@@ -105,48 +105,164 @@
                 <div class="filters">
                     <div class="filter-group">
                         <label for="stageFilter"><i class="fas fa-filter"></i> Pipeline Stage</label>
-                        <select class="filter-select" id="stageFilter">
-                            <option value="">All Stages</option>
-                            <option value="prospecting">Prospecting</option>
-                            <option value="demo-request">Demo Request</option>
-                            <option value="demo-on">Demo On</option>
-                            <option value="demo-completed">Demo Completed</option>
-                            <option value="quoted">Quoted</option>
-                            <option value="quote">Quote</option>
-                            <option value="negotiation">Negotiation</option>
-                            <option value="ordered">Ordered</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="lost">Lost</option>
-                        </select>
+                        <div class="custom-multiselect">
+                            <div class="select-box" onclick="toggleDropdown('stage')">
+                                <select class="filter-select" id="stageFilter" multiple style="display: none;">
+                                    <option value="">All Stages</option>
+                                    <option value="prospecting">Prospecting</option>
+                                    <option value="demo-request">Demo Request</option>
+                                    <option value="demo-on">Demo On</option>
+                                    <option value="demo-completed">Demo Completed</option>
+                                    <option value="quoted">Quoted</option>
+                                    <option value="quote">Quote</option>
+                                    <option value="negotiation">Negotiation</option>
+                                    <option value="ordered">Ordered</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="lost">Lost</option>
+                                </select>
+                                <div class="selected-text">All Stages</div>
+                                <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-content" id="stageDropdown">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search stages..." onkeyup="filterDropdown('stage', this.value)">
+                                </div>
+                                <div class="dropdown-options">
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value=""> All Stages
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="prospecting"> Prospecting
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="demo-request"> Demo Request
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="demo-on"> Demo On
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="demo-completed"> Demo Completed
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="quoted"> Quoted
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="quote"> Quote
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="negotiation"> Negotiation
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="ordered"> Ordered
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="delivered"> Delivered
+                                    </label>
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value="lost"> Lost
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="filter-group">
                         <label for="hospitalFilter"><i class="fas fa-hospital"></i> Hospital</label>
-                        <select class="filter-select" id="hospitalFilter">
-                            <option value="">All Hospitals</option>
-                        </select>
+                        <div class="custom-multiselect">
+                            <div class="select-box" onclick="toggleDropdown('hospital')">
+                                <select class="filter-select" id="hospitalFilter" multiple style="display: none;">
+                                    <option value="">All Hospitals</option>
+                                </select>
+                                <div class="selected-text">All Hospitals</div>
+                                <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-content" id="hospitalDropdown">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search hospitals..." onkeyup="filterDropdown('hospital', this.value)">
+                                </div>
+                                <div class="dropdown-options" id="hospitalOptions">
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value=""> All Hospitals
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="filter-group">
                         <label for="productFilter"><i class="fas fa-cube"></i> Product</label>
-                        <select class="filter-select" id="productFilter">
-                            <option value="">All Products</option>
-                        </select>
+                        <div class="custom-multiselect">
+                            <div class="select-box" onclick="toggleDropdown('product')">
+                                <select class="filter-select" id="productFilter" multiple style="display: none;">
+                                    <option value="">All Products</option>
+                                </select>
+                                <div class="selected-text">All Products</div>
+                                <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-content" id="productDropdown">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search products..." onkeyup="filterDropdown('product', this.value)">
+                                </div>
+                                <div class="dropdown-options" id="productOptions">
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value=""> All Products
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="filter-group">
                         <label for="distributorFilter"><i class="fas fa-user-tie"></i> Distributor</label>
-                        <select class="filter-select" id="distributorFilter">
-                            <option value="">All Distributors</option>
-                        </select>
+                        <div class="custom-multiselect">
+                            <div class="select-box" onclick="toggleDropdown('distributor')">
+                                <select class="filter-select" id="distributorFilter" multiple style="display: none;">
+                                    <option value="">All Distributors</option>
+                                </select>
+                                <div class="selected-text">All Distributors</div>
+                                <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-content" id="distributorDropdown">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search distributors..." onkeyup="filterDropdown('distributor', this.value)">
+                                </div>
+                                <div class="dropdown-options" id="distributorOptions">
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value=""> All Distributors
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- New Sales Person Filter -->
                     <div class="filter-group">
                         <label for="salesPersonFilter"><i class="fas fa-user"></i> Sales Person</label>
-                        <select class="filter-select" id="salesPersonFilter">
-                            <option value="">All Sales Persons</option>
-                        </select>
+                        <div class="custom-multiselect">
+                            <div class="select-box" onclick="toggleDropdown('salesPerson')">
+                                <select class="filter-select" id="salesPersonFilter" multiple style="display: none;">
+                                    <option value="">All Sales Persons</option>
+                                </select>
+                                <div class="selected-text">All Sales Persons</div>
+                                <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-content" id="salesPersonDropdown">
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search sales persons..." onkeyup="filterDropdown('salesPerson', this.value)">
+                                </div>
+                                <div class="dropdown-options" id="salesPersonOptions">
+                                    <label class="dropdown-option">
+                                        <input type="checkbox" value=""> All Sales Persons
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="clear-filters" onclick="clearAllFilters()">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
                     </div>
                 </div>
                 
@@ -157,10 +273,15 @@
                 </div>
                 
                 <!-- Buy Box Style Button -->
-                <button class="buy-box" onclick="openAddModal()">
-                    <i class="fas fa-plus-circle"></i> Add New Record
-                </button>
-                
+               <!-- Add this in the records tab after the search box -->
+<div class="actions-container">
+    <button class="buy-box" onclick="openAddModal()">
+        <i class="fas fa-plus-circle"></i> Add New Record
+    </button>
+    <button class="print-btn" id="printBtn">
+        <i class="fas fa-print"></i> Print Records
+    </button>
+</div>
                 <div class="table-responsive">
                     <table class="records-table">
                         <thead>
@@ -286,42 +407,43 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Product Forecast Tab -->
+            <div class="tab-content" id="product-forecast-tab">
+                <div class="product-forecast-grid" id="productForecastGrid">
+                    <!-- Product forecast cards will be dynamically generated here -->
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-bar"></i> Product Performance Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="productPerformanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-table"></i> Product Forecast Details</h3>
+                    <div class="table-responsive">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Total Opportunities</th>
+                                    <th>Total Potential Value</th>
+                                    <th>Weighted Forecast</th>
+                                    <th>Average Deal Size</th>
+                                    <th>Win Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productForecastTable">
+                                <!-- Product forecast details will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- Product Forecast Tab -->
-<div class="tab-content" id="product-forecast-tab">
-    <div class="product-forecast-grid" id="productForecastGrid">
-        <!-- Product forecast cards will be dynamically generated here -->
-    </div>
-    
-    <div class="dashboard-card">
-        <h3><i class="fas fa-chart-bar"></i> Product Performance Analysis</h3>
-        <div class="chart-container">
-            <canvas id="productPerformanceChart"></canvas>
-        </div>
-    </div>
-    
-    <div class="dashboard-card">
-        <h3><i class="fas fa-table"></i> Product Forecast Details</h3>
-        <div class="table-responsive">
-            <table class="records-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Total Opportunities</th>
-                        <th>Total Potential Value</th>
-                        <th>Weighted Forecast</th>
-                        <th>Average Deal Size</th>
-                        <th>Win Rate</th>
-                    </tr>
-                </thead>
-                <tbody id="productForecastTable">
-                    <!-- Product forecast details will be added here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
     <!-- Add Record Modal -->
     <div class="modal" id="addModal">
